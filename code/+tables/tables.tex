@@ -1,0 +1,115 @@
+\documentclass{article}
+
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage[tableposition=top]{caption}
+\usepackage{geometry}
+\usepackage{pdflscape}
+\usepackage{threeparttable}
+
+\addtolength{\topmargin}{-0.75in}
+\addtolength{\textheight}{1.5in}
+\addtolength{\hoffset}{-0.5in}
+\addtolength{\textwidth}{1in}
+
+\begin{document}
+
+\begin{table}
+\centering
+\caption{Baselines}
+\input{table1.tex}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Baseline Decompositions}
+\input{table2.tex}
+\end{table}
+
+\clearpage
+
+\begin{table}[h]
+\caption{Alternative Asset Targets}
+\begin{threeparttable}
+\centering
+\input{table3.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[h]
+\caption{Bequests, Death, and Annuities}
+\begin{threeparttable}
+\centering
+\input{table4.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[h]
+\caption{Discount Factor Heterogeneity}
+\begin{threeparttable}
+\centering
+\input{table5.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[h]
+\caption{Risk Aversion}
+\begin{threeparttable}
+\centering
+\input{table6.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[h]
+\caption{Epstein-Zin Preferences}
+\begin{threeparttable}
+\centering
+\input{table7.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[h]
+\caption{Alternative Income Processes, Annual}
+\begin{threeparttable}
+\centering
+\input{table8.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[h]
+\caption{Alternative Income Processes, Quarterly}
+\begin{threeparttable}
+\centering
+\input{table9.tex}
+
+\begin{tablenotes}
+	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\end{document}

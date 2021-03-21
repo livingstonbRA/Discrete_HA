@@ -1,0 +1,16 @@
+
+# filetypes
+.DS_Store
+*.*~
+*.mat
+*.sublime-workspace
+*.sublime-project
+*.asv
+
+# directories
+input
+temp
+batch/sbatch
+batch/mfiles
+output
+**old
