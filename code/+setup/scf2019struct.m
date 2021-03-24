@@ -5,6 +5,7 @@ function scf = scf2019struct()
 
     scf = struct();
     scf.quarterly_earnings = 79181 / 4;
+    scf.annual_earnings = 79181;
     scf.median_totw = 1.54;
     scf.median_liqw = 0.05;
     scf.htm = 0.39;

@@ -20,7 +20,7 @@ classdef Statistics < handle
 		mean_gross_y_annual;
 		std_log_gross_y_annual;
 		std_log_net_y_annual;
-		annual_inc_dollars;
+		numeraire_in_dollars;
 
 		wpercentiles;
 
@@ -115,8 +115,8 @@ classdef Statistics < handle
 			obj.std_log_net_y_annual = sfill(NaN,...
 			    'Stdev log net annual income', 3);
 
-			dollars = sprintf('$%g', obj.p.annual_inc_dollars);
-			obj.annual_inc_dollars = sfill(dollars,...
+			dollars = sprintf('$%g', obj.p.numeraire_in_dollars);
+			obj.numeraire_in_dollars = sfill(dollars,...
 			    'Dollar value of mean gross ann inc (numeraire)');
 
 			% RA mpc
@@ -278,16 +278,3 @@ function interp_out = constrained_interp(values, cdf_x)
 		interp_out = @(x) NaN;
 	end
 end
-
-% function [values_out, cdf_out, iu] = unique_sort(values_in, pmf_in, iunique)
-% 	sorted_mat = sortrows([values_in(:), pmf_in(:)]);
-% 	tmp_cdf = cumsum(sorted_mat(:,2));
-
-% 	if iunique == 1
-% 		[values_out, iu] = unique(sorted_mat, 'last');
-% 		cdf_out = tmp_cdf(iu);
-% 	else
-% 		[cdf_out, iu] = unique(tmp_cdf, 'first');
-% 		values_out = sorted_mat(iu,1);
-% 	end
-% end

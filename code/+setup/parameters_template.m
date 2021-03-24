@@ -7,8 +7,8 @@ function [params, all_names] = parameters(runopts)
     scf = setup.scf2019struct();
 
     dollars = [-1, -500, -5000, 1, 500, 5000];
-    shared_params.annual_inc_dollars = scf.quarterly_earnings * 4;
-    shared_params.shocks = dollars ./ shared_params.annual_inc_dollars;
+    shared_params.numeraire_in_dollars = scf.quarterly_earnings * 4;
+    shared_params.shocks = dollars ./ shared_params.numeraire_in_dollars;
 
     shared_params.xgrid_par = 0.1;
     shared_params.xgrid_term1wt = 0.01;

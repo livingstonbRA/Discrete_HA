@@ -4,29 +4,11 @@ function [params, all_names] = parameters(runopts)
 
     import solver.DHACalibrator
     
-    %% SET COMMON PARAMETERS
+    %% SET SHARED PARAMETERS
+
     % Statistics from the 2019 SCF
     scf = setup.scf2019struct();
-
-    % Shock sizes
-    dollars = [-1, -500, -5000, 1, 500, 5000];
-    shared_params.annual_inc_dollars = scf.quarterly_earnings * 4;
-    shared_params.shocks = dollars ./ shared_params.annual_inc_dollars;
-
-    shared_params.xgrid_par = 0.1;
-    shared_params.xgrid_term1wt = 0.01;
-    shared_params.xgrid_term1curv = 0.5;
-    shared_params.xmax = 500;
-
-    shared_params.shocks_labels = {};
-    for ishock = 1:6
-        val = dollars(ishock);
-        if val < 0
-            shared_params.shocks_labels{ishock} = sprintf('-$%g', abs(val));
-        else
-            shared_params.shocks_labels{ishock} = sprintf('$%g', abs(val));
-        end
-    end
+    shared_params.numeraire_in_dollars = scf.annual_earnings;
 
     % Income processes
     quarterly_b_params = shared_params;

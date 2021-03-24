@@ -29,7 +29,7 @@ classdef Params < handle
         IncomeProcess = '';
         
         % Mean annual income, dollars
-        annual_inc_dollars = 72000;
+        numeraire_in_dollars = 72000;
 
         % Useful functions to convert between numeraire (mean ann inc) and dollars
         convert_to_dollars;
@@ -44,7 +44,8 @@ classdef Params < handle
         Nmpcsim = 2e5; % for optional MPC simulation
 
         % MPC shock sizes
-        shocks = [-1e-5 -0.01 -0.1 1e-5 0.01 0.1];
+        shocks_dollars = [-1, -500, -5000, 1, 500, 5000];
+        shocks;
         shocks_labels;
         
         % Thresholds (in dollars) theta to compute share households with a < theta
@@ -65,11 +66,11 @@ classdef Params < handle
         nx_neg = 0;
         nx_DST = 250;
         nx_neg_DST = 0;
-        xmax = 100;
-        xgrid_par = 0.2; % 1 for linear, 0 for L-shaped
+        xmax = 500;
+        xgrid_par = 0.1; % 1 for linear, 0 for L-shaped
         xgrid_par_neg = 0.4;
         xgrid_term1wt = 0.01;
-        xgrid_term1curv = 0.8;
+        xgrid_term1curv = 0.5;
         borrow_lim = 0;
         nbl_adjustment = 0.99;
         
@@ -282,34 +283,36 @@ classdef Params < handle
             obj.nbeta = max(obj.nbeta, numel(obj.beta_grid_forced));
             obj.compute_savtax =...
                 @(sav) obj.savtax * max(sav - obj.savtaxthresh, 0);
-            obj.convert_to_dollars = @(num) num * obj.annual_inc_dollars;
-            obj.convert_from_dollars = @(dollars) dollars / obj.annual_inc_dollars;
+            obj.convert_to_dollars = @(num) num * obj.numeraire_in_dollars;
+            obj.convert_from_dollars = @(dollars) dollars / obj.numeraire_in_dollars;
             obj.convert_to_dollars_str = @(num) dollar_representation(...
                 obj.convert_to_dollars(num));
 
-            if obj.EpsteinZin
-                obj.DeterministicMPCs = false;
-            end
+            obj.shocks = obj.shocks_dollars / obj.numeraire_in_dollars;
 
             % Create printable labels for shock sizes
             if isempty(obj.shocks_labels)
                 obj.shocks_labels = {};
-                for ishock = 1:6
-                    obj.shocks_labels{ishock} = sprintf('%g', obj.shocks(ishock));
+                for ishock = 1:numel(obj.shocks)
+                    obj.shocks_labels{ishock} = dollar_representation(obj.shocks_dollars(ishock));
                 end
+            end
+
+            if obj.EpsteinZin
+                obj.DeterministicMPCs = false;
             end
 
             % Create printable labels for dollar wealth thresholds
             if isempty(obj.dollar_threshold_labels)
                 obj.dollar_threshold_labels = {};
                 for ii = 1:numel(obj.dollar_thresholds)
-                    obj.dollar_threshold_labels{ii} = sprintf(...
-                        '$%g', obj.dollar_thresholds(ii));
+                    obj.dollar_threshold_labels{ii} = dollar_representation(obj.dollar_thresholds(ii));
                 end
             end
 
+            % Convert dollar thresholds back to units of numeraire
             for ii = 1:numel(obj.dollar_thresholds)
-                obj.dollar_thresholds(ii) = obj.dollar_thresholds(ii) / obj.annual_inc_dollars;
+                obj.dollar_thresholds(ii) = obj.dollar_thresholds(ii) / obj.numeraire_in_dollars;
             end
 
             if isempty(obj.descr)
