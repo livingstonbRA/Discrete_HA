@@ -19,7 +19,7 @@ runopts.MPCs_loan_and_loss = false;
 runopts.DeterministicMPCs = true; % must be on if decompositions are needed
 runopts.SaveOutput = true;
 
-% name of parameters script
+% name of parameters script in code/+params directory
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)

@@ -54,8 +54,8 @@ for ip = 1:ind
 
     p0 = params(baseind);
     p1 = params(ip);
-    stats0 = results(baseind).direct;
-    stats1 = results(ip).direct;
+    stats0 = stats{baseind};
+    stats1 = stats{ip};
     cdecomp = statistics.ComparisonDecomp(p0, p1, stats0, stats1);
 
     mpcs0 = reshape(stats0.mpcs(5).mpcs_1_t{1},...

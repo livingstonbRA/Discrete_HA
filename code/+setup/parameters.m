@@ -490,6 +490,7 @@ function [params, all_names] = parameters(runopts)
         heterogeneity = setup.Prefs_R_Heterogeneity(params);
 
         if (params.nbeta > 1) && isequal(heterogeneity.ztrans, eye(params.nbeta))
+            % Adjust upper bound on beta if using fixed discount factor heterogeneity
             new_betaH = params.betaH - max(heterogeneity.betagrid0);
             params.set("betaH", new_betaH, true);
         end

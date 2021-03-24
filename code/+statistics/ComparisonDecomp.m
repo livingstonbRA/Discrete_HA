@@ -49,7 +49,7 @@ classdef ComparisonDecomp < handle
 			obj.same_model_name = strcmp(p0.name, p1.name);
 
 			obj.RA_mpcs_available = all(...
-				~isnan([obj.stats0.mpc_RA, obj.stats1.mpc_RA]));
+				~isnan([obj.stats0.mpc_RA.value, obj.stats1.mpc_RA.value]));
 
 			obj.agrid = stats0.agrid;
 			obj.na = numel(obj.agrid);
@@ -156,8 +156,8 @@ classdef ComparisonDecomp < handle
 
 		function make_initial_computations(obj, mpcs0, mpcs1)
 
-			pmf0 = obj.stats0.adist;
-			obj.pmf0_a = obj.stats0.agrid_dist;
+			pmf0 = obj.stats0.pmf;
+			obj.pmf0_a = obj.stats0.pmf_a;
 			mpcs0_a = aux.condl_mpcs(mpcs0, pmf0, obj.pmf0_a);
 
 			if ~isequal(obj.stats0.agrid, obj.stats1.agrid)
@@ -165,8 +165,8 @@ classdef ComparisonDecomp < handle
 				% baseline grid
 
 				agrid1_orig = obj.stats1.agrid;
-				pmf1_orig = obj.stats1.adist;
-				pmf1_a_orig = obj.stats1.agrid_dist;
+				pmf1_orig = obj.stats1.pmf;
+				pmf1_a_orig = obj.stats1.pmf_a;
 				mpcs1_a_orig = aux.condl_mpcs(...
 					mpcs1, pmf1_orig, pmf1_a_orig);
 
@@ -187,13 +187,13 @@ classdef ComparisonDecomp < handle
             		agrid1_orig, mpcs1_a_orig, 'pchip', 'nearest');
             	mpcs1_a = mpcs1_a_interp(obj.agrid);
             else
-            	pmf1 = obj.stats1.adist;
-				obj.pmf1_a = obj.stats1.agrid_dist;
+            	pmf1 = obj.stats1.pmf;
+				obj.pmf1_a = obj.stats1.pmf_a;
 				mpcs1_a = aux.condl_mpcs(mpcs1, pmf1, obj.pmf1_a);
 			end
 
 			if obj.RA_mpcs_available
-				offset = obj.stats1.mpc_RA - obj.stats0.mpc_RA;
+				offset = obj.stats1.mpc_RA.value - obj.stats0.mpc_RA.value;
 	            mpcs1_adj = mpcs1_a - offset;
 	            obj.Empc1adj_g0 = dot(mpcs1_adj, obj.pmf0_a);
 	        end
