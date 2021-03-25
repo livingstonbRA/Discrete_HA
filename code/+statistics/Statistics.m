@@ -63,6 +63,8 @@ classdef Statistics < handle
 
 			obj.pmf = model.pmf;
 			obj.agrid = grdDST.a.vec;
+
+			obj.set_labels();
 		end
 
 		function compute_statistics(obj)
@@ -85,43 +87,84 @@ classdef Statistics < handle
 	end
 
 	methods (Access=protected)
+		function set_labels(obj)
+			% Intro stats
+			obj.beta_A = empty_stat('Beta (annualized)', 3);
+			obj.beta_Q = empty_stat('Beta (quarterly)', 3);
+			obj.mean_a = empty_stat('Mean wealth', 3, 'Mean wealth');
+			obj.mean_s = empty_stat('Mean s');
+			obj.sav0 = empty_stat('s = 0', 3, '$s = 0$');
+			obj.mean_x = empty_stat('Mean x');
+			obj.mean_gross_y_annual = empty_stat('Mean gross annual income', 3);
+			obj.std_log_gross_y_annual = empty_stat(...
+				'Stdev log gross annual income', 3);
+			obj.std_log_net_y_annual = empty_stat(...
+			    'Stdev log net annual income', 3);
+			obj.numeraire_in_dollars = empty_stat(...
+				'Dollar value of mean gross ann inc (numeraire)');
+			obj.mpc_RA = empty_stat('MPC (RA)', 3);
+
+			% Params
+			obj.params.freq = empty_stat('Frequency');
+
+			% Percentiles and shares
+			npct = numel(obj.p.percentiles);
+		    obj.wpercentiles = cell(1, npct);
+			for ip = 1:npct
+				wpct_lab = sprintf('Wealth, %gth pctile', obj.p.percentiles(ip));
+				obj.wpercentiles{ip} = empty_stat(wpct_lab, 3);
+			end
+			obj.median_a = empty_stat('Median wealth', 3);
+
+			obj.w_top10share = empty_stat(...
+				'Wealth, top 10% share', 3, 'Wealth, top 10\% share');
+			obj.w_top1share = empty_stat(...
+				'Wealth, top 1% share', 3, 'Wealth, top 1\% share');
+			obj.wgini = empty_stat('Gini coefficient, wealth', 3, 'Wealth, Gini coeff');
+
+			% Wealth constrained
+			neps = numel(obj.p.epsilon);
+		    obj.constrained = cell(1, neps);
+		    obj.constrained_pct = cell(1, neps);
+		    for ip = 1:neps
+				htm = obj.p.epsilon(ip);
+				obj.constrained{ip} = empty_stat(...
+					sprintf('a <= %g', htm), 3, sprintf('$a \\leq %g$', htm));
+
+				obj.constrained_pct{ip} = empty_stat(...
+					sprintf('a <= %g%% mean ann inc', 100 * htm));
+			end
+
+			neps = numel(obj.p.dollar_thresholds);
+			obj.constrained_dollars = cell(1, neps);
+			for ip = 1:neps
+				label = obj.p.dollar_threshold_labels{ip};
+				obj.constrained_dollars{ip} = empty_stat(...
+					sprintf('a <= %s', label), 3, sprintf('$a \\leq %s$', "\" + label));
+			end
+
+			% HtM stats
+			obj.a_lt_ysixth = empty_stat(...
+				'a_i <= y_i / 6', 3, '$a \leq 1 / 6$ own quarterly inc');
+			obj.a_lt_ytwelfth = empty_stat(...
+				'a_i <= y_i / 12', 3, '$a \leq 1 / 12$ own quarterly inc');
+		end
+
 		function compute_intro_stats(obj)
-			obj.beta_A = sfill(obj.p.beta0 ^ obj.freq,...
-				'Beta (annualized)', 3);
-		    obj.beta_Q = sfill(obj.p.beta0 ^ (obj.freq/4),...
-		    	'Beta (quarterly)', 3);
-		    
-		    tmp = obj.expectation(obj.grdDST.a.matrix);
-		    obj.mean_a = sfill(tmp, 'Mean wealth', 3, 'Mean wealth');
+			obj.beta_A.value = obj.p.beta0 ^ obj.freq;
+		    obj.beta_Q.value = obj.p.beta0 ^ (obj.freq / 4);
+		    obj.mean_a.value = obj.expectation(obj.grdDST.a.matrix);
 
 		    xdist = obj.model.xdist(:);
+		    obj.mean_s.value = dot(obj.model.sav_x(:), xdist);
+		    obj.sav0.value = dot(obj.model.sav_x(:)==0, xdist);
+		    obj.mean_x.value = dot(obj.model.xvals(:), xdist);
 
-		    mean_s = dot(obj.model.sav_x(:), xdist);
-		    obj.mean_s = sfill(mean_s, 'Mean s');
+		    obj.mean_gross_y_annual.value = dot(obj.model.y_x(:) * obj.freq, xdist);
+			obj.numeraire_in_dollars.value = sprintf('$%g', obj.p.numeraire_in_dollars);
 
-		    tmp = dot(obj.model.sav_x(:)==0, xdist);
-		    obj.sav0 = sfill(tmp, 's = 0', 3, '$s = 0$');
-
-		    mean_x = dot(obj.model.xvals(:), xdist);
-		    obj.mean_x = sfill(mean_x, 'Mean x');
-
-		    % Income
-		    mean_y = dot(obj.model.y_x(:) * obj.freq, xdist);
-		    obj.mean_gross_y_annual = sfill(mean_y,...
-		    	'Mean gross annual income', 3);
-
-		    obj.std_log_gross_y_annual = sfill(NaN,...
-			    'Stdev log gross annual income', 3);
-			obj.std_log_net_y_annual = sfill(NaN,...
-			    'Stdev log net annual income', 3);
-
-			dollars = sprintf('$%g', obj.p.numeraire_in_dollars);
-			obj.numeraire_in_dollars = sfill(dollars,...
-			    'Dollar value of mean gross ann inc (numeraire)');
-
-			% RA mpc
-			obj.mpc_RA = sfill(NaN, 'MPC (RA)', 3);
-		    if (obj.p.nb == 1) && (~obj.p.EpsteinZin) && isequal(obj.p.temptation, 0) && (obj.p.bequest_weight == 0)
+		    if (obj.p.nb == 1) && (~obj.p.EpsteinZin) && isequal(obj.p.temptation, 0) ...
+		    	&& (obj.p.bequest_weight == 0)
 		        tmp = (1-obj.p.dieprob) * obj.p.beta0 * obj.p.R;
 		        obj.mpc_RA.value = obj.p.R * tmp ^ (-1 / obj.p.risk_aver) - 1;
 		    end
@@ -131,12 +174,10 @@ classdef Statistics < handle
 			obj.params = struct();
 
 			if obj.p.freq == 1
-				tmp = 'Annual';
+				obj.params.freq.value = 'Annual';
 			else
-				tmp = 'Quarterly';
+				obj.params.freq.value = 'Quarterly';
 			end
-			obj.params.freq = sfill(tmp,...
-				'Frequency');
 		end
 
 		function construct_distributions(obj)
@@ -146,17 +187,10 @@ classdef Statistics < handle
 
 		function compute_percentiles(obj)
 			w_pct = pct_interp(obj.grdDST.a.vec, obj.cdf_a);
-
-			npct = numel(obj.p.percentiles);
-		    obj.wpercentiles = cell(1, npct);
-			for ip = 1:npct
-				pct_at = obj.p.percentiles(ip);
-
-				tmp_b = sprintf('Wealth, %gth pctile', pct_at);
-				obj.wpercentiles{ip} = sfill(...
-					w_pct(pct_at/100), tmp_b, 3);
+			for ip = 1:numel(obj.p.percentiles)
+				obj.wpercentiles{ip}.value = w_pct(obj.p.percentiles(ip) / 100);
 			end
-			obj.median_a = sfill(w_pct(0.5), 'Median wealth', 3);
+			obj.median_a.value = w_pct(0.5);
 		end
 
 		function compute_inequality(obj)
@@ -168,15 +202,11 @@ classdef Statistics < handle
 			wshare_interp = griddedInterpolant(cdf_u,...
 				cum_share(iu), 'pchip', 'nearest');
 
-			tmp = 1 - wshare_interp(0.9);
-			obj.w_top10share = sfill(tmp, 'Wealth, top 10% share', 3, 'Wealth, top 10\% share');
-
-			tmp = 1 - wshare_interp(0.99);
-			obj.w_top1share = sfill(tmp, 'Wealth, top 1% share', 3, 'Wealth, top 1\% share');
+			obj.w_top10share.value = 1 - wshare_interp(0.9);
+			obj.w_top1share.value = 1 - wshare_interp(0.99);
 			
 			% Gini coefficient
-			tmp = aux.direct_gini(obj.grdDST.a.vec, obj.pmf_a);
-			obj.wgini = sfill(tmp, 'Gini coefficient, wealth', 3, 'Wealth, Gini coeff');
+			obj.wgini.value = aux.direct_gini(obj.grdDST.a.vec, obj.pmf_a);
 		end
 
 		function compute_constrained(obj)
@@ -184,28 +214,16 @@ classdef Statistics < handle
 			cinterp = constrained_interp(...
 	        	obj.grdDST.a.vec, obj.cdf_a);
 
-		    neps = numel(obj.p.epsilon);
-		    obj.constrained = cell(1, neps);
-		    obj.constrained_pct = cell(1, neps);
-		    for ip = 1:neps
+		    for ip = 1:numel(obj.p.epsilon)
 				htm = obj.p.epsilon(ip);
 
-				tmp = cinterp(htm);
-				obj.constrained{ip} = sfill(tmp,...
-					sprintf('a <= %g', htm), 3, sprintf('$a \\leq %g$', htm));
-
-				obj.constrained_pct{ip} = sfill(tmp,...
-					sprintf('a <= %g%% mean ann inc', 100 * htm));
+				obj.constrained{ip}.value = cinterp(htm);
+				obj.constrained_pct{ip}.value = cinterp(htm);
 			end
 
-			obj.constrained_dollars = {};
 			for ip = 1:numel(obj.p.dollar_thresholds)
 				htm = obj.p.dollar_thresholds(ip);
-				label = obj.p.dollar_threshold_labels{ip};
-
-				tmp = cinterp(htm);
-				obj.constrained_dollars{ip} = sfill(tmp,...
-					sprintf('a <= %s', label), 3, sprintf('$a \\leq %s$', "\" + label));
+				obj.constrained_dollars{ip}.value = cinterp(htm);
 			end
 
 			% Wealth / (quarterly earnings) < epsilon
@@ -220,10 +238,8 @@ classdef Statistics < handle
 
 		    ay_interp = constrained_interp(vals, cdf_AY);
 
-			obj.a_lt_ysixth = sfill(...
-				ay_interp(1/6), 'a_i <= y_i / 6', 3, '$a \leq 1 / 6$ own quarterly inc');
-			obj.a_lt_ytwelfth = sfill(...
-				ay_interp(1/12), 'a_i <= y_i / 12', 3, '$a \leq 1 / 12$ own quarterly inc');
+			obj.a_lt_ysixth.value = ay_interp(1/6)
+			obj.a_lt_ytwelfth.value = ay_interp(1/12);
 		end
 
 		function out = expectation(obj, vals)
@@ -236,6 +252,10 @@ classdef Statistics < handle
 			out = sfill(value, label, varargin{:});
 		end
 	end
+end
+
+function out = empty_stat(varargin)
+	out = sfill(NaN, varargin{:});
 end
 
 function out = sfill(value, label, decimals, tex_label)
