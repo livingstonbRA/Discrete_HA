@@ -238,7 +238,7 @@ classdef Statistics < handle
 
 		    ay_interp = constrained_interp(vals, cdf_AY);
 
-			obj.a_lt_ysixth.value = ay_interp(1/6)
+			obj.a_lt_ysixth.value = ay_interp(1/6);
 			obj.a_lt_ytwelfth.value = ay_interp(1/12);
 		end
 

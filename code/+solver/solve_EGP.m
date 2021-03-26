@@ -25,45 +25,35 @@ function model = solve_EGP(p, grids, heterogeneity,...
     nextmpcshock = (periods_until_shock == 1) * futureshock;
 
     ss_dims = [p.nx, p.nyP, p.nyF, p.nb];
-    ss_dims_aug = [ss_dims p.nyT];
-
-    repmat_to_state_space = ...
-        @(arr) aux.Reshape.repmat_auto(arr, ss_dims);
-    repmat_to_state_space_aug = ...
-        @(arr) aux.Reshape.repmat_auto(arr, ss_dims_aug);
-
-    reshape_to_state_space = ...
-        @(arr) reshape(arr, ss_dims);
-
-    r_bc = heterogeneity.r_broadcast;
     R_bc = heterogeneity.R_broadcast;
-    R_row = reshape(p.R, 1, []);
 
     % If expected future shock is negative, need to raise today's
     % borrowing limit to satisfy future budget constraints with prob one
     % (in all other cases, it should hold that adj_borr_lims = p.borrow_lim).
     tmp = p.borrow_lim - futureshock - income.minnety;
-    adj_borr_lims = max(tmp ./ R_row, p.borrow_lim);
-    adj_borr_lims_bc = aux.Reshape.flatten(adj_borr_lims, 4);
-    adj_borr_lims_bc = aux.Reshape.repmat_auto(adj_borr_lims_bc,...
-        [1, 1, 1, p.nb]);
+    adj_borr_lims = max(tmp ./ reshape(p.R, 1, []), p.borrow_lim);
 
-    svecs = grids.s.vec + (adj_borr_lims - p.borrow_lim);
+    adj_borr_lims_bc = adj_borr_lims(:);
+    if numel(adj_borr_lims_bc) == 1
+        adj_borr_lims_bc = repmat(adj_borr_lims_bc, p.nb, 1);
+    end
+    adj_borr_lims_bc = shiftdim(adj_borr_lims_bc, -3);
+
     svecs_bc = grids.s.vec + (adj_borr_lims_bc - p.borrow_lim);
+    svecs_bc_tax = p.compute_savtax(svecs_bc);
 
     xmat = grids.x.matrix + R_bc .* (adj_borr_lims_bc - p.borrow_lim);
 
-    svecs_tax = p.compute_savtax(svecs);
-    svecs_bc_tax = p.compute_savtax(svecs_bc);
-
-    tempt_bc = heterogeneity.temptation_broadcast;
-    tempt_expr = tempt_bc ./ (1 + tempt_bc);
-
-    betagrid_bc = heterogeneity.betagrid_broadcast;
+    tempt_expr = heterogeneity.temptation_broadcast;
+    tempt_expr = tempt_expr ./ (1 + tempt_expr);
 
     % Find xprime as a function of s
-    tmp = R_bc .* svecs_bc + income.netymatEGP + nextmpcshock;
-    xprime_s = repmat_to_state_space_aug(tmp);
+    xprime_s = R_bc .* svecs_bc + income.netymatEGP + nextmpcshock;
+
+    % Extend to full state space
+    newdims = [ss_dims p.nyT];
+    newdims(newdims == size(xprime_s)) = 1;
+    xprime_s = repmat(xprime_s, newdims);
 
     %% ----------------------------------------------------
     % CONSTRUCT EXPECTATIONS MATRIX, ETC...
@@ -72,11 +62,10 @@ function model = solve_EGP(p, grids, heterogeneity,...
 
     % Initial guess for consumption function
     tempt_adj = 0.5 * (max(p.temptation) > 0.05);
-    r_mat_adj = max(r_bc, 0.001);
-    con = (r_mat_adj + tempt_adj) .* xmat;
+    con = (max(heterogeneity.r_broadcast, 0.001) + tempt_adj) .* xmat;
     con = con(:);
     con(con<=0) = min(con(con>0));
-    con = reshape_to_state_space(con);
+    con = reshape(con, ss_dims);
 
     %% ----------------------------------------------------
     % EGP ITERATION
@@ -93,12 +82,14 @@ function model = solve_EGP(p, grids, heterogeneity,...
         % interpolate to get c(x') using c(x)
 
         % c(x')
-        c_xp = get_c_xprime(p, grids, xprime_s, nextmodel, conlast, nextmpcshock, xmat);
+        c_xp = get_c_xprime(p, grids, xprime_s, ...
+            nextmodel, conlast, nextmpcshock, xmat);
 
         % MUC in current period, from Euler equation
         muc_s = get_marginal_util_cons(...
             p, income, grids, c_xp, xprime_s, R_bc,...
-            Emat, betagrid_bc, heterogeneity.risk_aver_broadcast,...
+            Emat, heterogeneity.betagrid_broadcast,...
+            heterogeneity.risk_aver_broadcast,...
             tempt_expr, svecs_bc);
      
         % c(s)
@@ -179,7 +170,6 @@ function out = extend_interp(old_interpolant, qvals, gridmin,...
     adj = qvals < gridmin;
     out(~adj) = old_interpolant(qvals(~adj));
     out(adj) = valmin + qvals(adj) - gridmin;
-
     out(adj) = min(out(adj), qvals(adj)-blim);
     out = max(out, lb);
 end

@@ -40,7 +40,6 @@ classdef EGP_EZ_Solver < handle
 		ss_dims;
     	ss_dims_aug;
 		repmat_to_state_space;
-    	repmat_to_state_space_aug;
 		reshape_to_state_space;
 
 		sgrid_repeated;
@@ -68,9 +67,7 @@ classdef EGP_EZ_Solver < handle
 		    obj.ss_dims_aug = [obj.ss_dims p.nyT];
 
 		    obj.repmat_to_state_space = ...
-		        @(arr) aux.Reshape.repmat_auto(arr, obj.ss_dims);
-		    obj.repmat_to_state_space_aug = ...
-		        @(arr) aux.Reshape.repmat_auto(arr, obj.ss_dims_aug);
+		    	@(arr) extend_dims(arr, obj.ss_dims)
 		    obj.reshape_to_state_space = ...
 		        @(arr) reshape(arr, obj.ss_dims);
 
@@ -148,13 +145,7 @@ classdef EGP_EZ_Solver < handle
 			obj.V_xp = zeros(obj.ss_dims_aug);
 			reshape_nx_nyT = @(arr) reshape(arr, [obj.p.nx, 1, 1, 1, obj.p.nyT]);
 
-			% temp_inc = obj.repmat_to_state_space_aug(obj.income.netymat_broadcast);
-	        % % temp_inc = repmat(kron(obj.income.netymat,ones(obj.p.nx,1)),obj.p.nb,1);
-
-	        % xp_s = obj.p.R * obj.grids.s.matrix + obj.income.netymat_broadcast;
-	        % xp_s = reshape(xp_s,[obj.p.nx obj.p.nyP obj.p.nyF obj.p.nb obj.p.nyT]);
-
-            for ib  = 1:obj.p.nb
+			for ib  = 1:obj.p.nb
             for iyF = 1:obj.p.nyF
             for iyP = 1:obj.p.nyP
 	            % xp_s_ib_iyF_iyP = xp_s(:,iyP,iyF,ib,:);
@@ -333,4 +324,9 @@ function out = extend_interp(old_interpolant, qvals, gridmin,...
 
     out(adj) = min(out(adj), qvals(adj)-blim);
     out = max(out, lb);
+end
+
+function out = extend_dims(arr, newdims)
+    newdims(newdims == size(arr)) = 1;
+    out = repmat(arr, newdims);
 end
