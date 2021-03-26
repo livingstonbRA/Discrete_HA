@@ -34,9 +34,6 @@ classdef MPCFinder < handle
 		mpcs = struct(); % results
 		loan = struct();
 		loss_in_2_years = struct();
-
-		ss_dims;
-		ss_dims_aug;
 	end
 
 	methods
@@ -54,17 +51,12 @@ classdef MPCFinder < handle
 			obj.xgrid_yT = repmat(grids.a.vec + income.netymat_broadcast,...
 				[1, 1, 1, p.nb, 1]);
 			obj.grids = grids;
-
-			obj.ss_dims = [p.nx_DST p.nyP p.nyF p.nb];
-			obj.ss_dims_aug = [obj.ss_dims p.nyT];
-
 			obj.r_mat = heterogeneity.r_broadcast;
 
 		    for ishock = 1:6
 		    	shock_label = p.shocks_labels{ishock};
 		    	shock_tex = split(p.shocks_labels{ishock}, "$");
 		    	shock_label_tex = sprintf('%s\\$%s', shock_tex{1}, shock_tex{2});
-		    	shock_size = p.shocks(ishock);
 
 		    	% mean mpc in period t out of period s shock
 		    	obj.mpcs(ishock).quarterly = sfill(NaN,...
@@ -74,17 +66,12 @@ classdef MPCFinder < handle
 		    		sprintf('Annual MPC (%%), out of %s', shock_label), 1,...
 		    		sprintf('Annual MPC (\\%%), out of %s', shock_label_tex));
 
-		    	if (p.freq == 1)
-		    		freqst = 'Annual';
-		    	else
-		    		freqst = 'Quarterly';
-		    	end
 		    	obj.mpcs(ishock).oneperiod = sfill(NaN,...
 		    		'MPC, quarterly or annual (\%)', 1, 'MPC, quarterly or annual (\%)');
 
 		    	obj.mpcs(ishock).shock = sfill(shock_label,...
 					'Shock description');
-				obj.mpcs(ishock).shock_normalized = sfill(shock_size,...
+				obj.mpcs(ishock).shock_normalized = sfill(shock_size = p.shocks(ishock),...
 					'Shock size as fraction of mean ann inc');
 				obj.mpcs(ishock).median_mpc = sfill(NaN,...
 					sprintf('Median one-period MPC (%%), out of %s',...
@@ -170,7 +157,7 @@ classdef MPCFinder < handle
 		function con = get_policy(obj, x_mpc, model)
 			% Computes consumption policy function after taking expectation to get
 		    % rid of yT dependence
-		    con = zeros(obj.ss_dims_aug);
+		    con = zeros(size(x_mpc));
 		    for ib = 1:obj.p.nb
 		    for iyF = 1:obj.p.nyF
 		    for iyP = 1:obj.p.nyP
@@ -213,11 +200,8 @@ classdef MPCFinder < handle
 	            Econ = trans_1_t * con;
 	            Econ_base = obj.basemodel.statetrans^(it-1) * obj.con_baseline;
 
-	            if immediate_shock == 0
-	            	mpcs = (Econ - Econ_base) / shock;
-	            else
-	            	mpcs = (Econ - Econ_base) / immediate_shock;
-	            end
+	            mpcshock = immediate_shock + (immediate_shock == 0) * shock;
+	            mpcs = (Econ - Econ_base) / mpcshock;
 
 	            loc_pos = mpcs(:) > 0;
                 dist_vec = obj.basemodel.pmf(:);
@@ -231,7 +215,7 @@ classdef MPCFinder < handle
                 mpcs_sorted = sortrows([mpc_ss(:), pmf(:)]);
 
                 [cdf_m, iu] = unique(cumsum(mpcs_sorted(:,2)), 'last');
-                mpc_pct_interp = griddedInterpolant(cdf_m, mpcs_sorted(iu),...
+                mpc_pct_interp = griddedInterpolant(cdf_m, mpcs_sorted(iu,1),...
                 	'pchip', 'nearest');
                 mpc_median = mpc_pct_interp(0.5);
         
@@ -280,7 +264,6 @@ classdef MPCFinder < handle
 
 		function computeMPCs_periods_after_shock(obj,...
 			ishock, shockperiod, trans_1_t)
-			shock = obj.p.shocks(ishock);
 
 			% transition probabilities from it = is to it = is + 1
 			trans_1_t = trans_1_t * obj.transition_matrix_given_t_s(...
@@ -290,7 +273,7 @@ classdef MPCFinder < handle
 	        LHScon = obj.con_baseline(:);
 
 	        for it = shockperiod+1:5 % it > shockperiod case, policy fcns stay the same in this region
-	            mpcs = (trans_1_t * LHScon - RHScon) / shock;
+	            mpcs = (trans_1_t * LHScon - RHScon) / obj.p.shocks(ishock);
 
 	            % state transitions are as usual post-shock
 	            obj.mpcs(ishock).avg_s_t(shockperiod,it) = obj.basemodel.pmf(:)' * mpcs(:);
@@ -327,11 +310,7 @@ classdef MPCFinder < handle
 			% t=ii + 1 given shock in period 'is'
 
 			% shocked cash-on-hand
-            if is == ii
-                shock = p.shocks(ishock);
-            else
-                shock = 0;
-            end
+			shock = (is == ii) * p.shocks(ishock);
 			x_mpc = obj.xgrid_yT + shock;
 
 			if (ii == is - 1) && (p.shocks(ishock) < 0)
@@ -360,10 +339,8 @@ classdef MPCFinder < handle
 			end
 			end
 
-			sav = max(sav, adj_borr_lim);
-
 			% next period's assets conditional on living
-			aprime_live = (1+repmat(obj.r_mat, [1 1 1 1 p.nyT])) .* sav;
+			aprime_live = (1+repmat(obj.r_mat, [1 1 1 1 p.nyT])) .* max(sav, adj_borr_lim);
 
 			% interpolate next period's assets back onto asset grid
 			asset_interp = funbas(obj.fspace, aprime_live(:));

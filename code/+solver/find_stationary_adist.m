@@ -21,7 +21,6 @@ function modelupdate = find_stationary_adist(...
     end
 
     nx = size(grids.a.vec, 1);
-    R_bc = heterogeneity.R_broadcast;
 
     % Cash-on-hand as function of (a,yP,yF,yT)
     % start from generic 'a' distribution (even with returns het)
@@ -43,7 +42,7 @@ function modelupdate = find_stationary_adist(...
 
     % Transition matrix over (x,yP,yF,beta) full asset space
     modelupdate.statetrans = get_transition_matrix(p, income, grids,...
-        nx, sav, R_bc);
+        nx, sav, heterogeneity.R_broadcast);
 
     % Stationary distribution over states
     if ~quiet
@@ -51,8 +50,6 @@ function modelupdate = find_stationary_adist(...
     end
     q = get_distribution(p, grids, income, nx,...
         modelupdate.statetrans, heterogeneity, quiet);
-%     [q,~] = eigs(modelupdate.statetrans',[],1,1);
-%     q = q / sum(q(:));
 
     modelupdate.pmf = reshape(full(q'), [nx, p.nyP, p.nyF, p.nb]);
 
