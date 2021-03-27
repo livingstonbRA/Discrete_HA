@@ -30,8 +30,6 @@ classdef Calibrator < handle
 
 		% Computation
 		iter = 1;
-		dnorm = 1e5;
-		ix_curr = 1;
 
 		% Function handle that calls code to solve the model
 		main_handle;
@@ -54,13 +52,7 @@ classdef Calibrator < handle
 			obj.target_names = target_names;
 			obj.target_values = target_values;
 
-			if obj.n ~= numel(obj.target_names)
-				error("Number of instruments and targets don't match")
-			elseif numel(obj.target_values) ~= numel(obj.target_names)
-				error("Too many/few values provided for targets")
-			end
-
-			obj.fscale = ones(1, obj.n);
+			obj.fscale = ones(obj.n, 1);
 
 			x0_1 = zeros(1, obj.n);
 			for i_var = 1:obj.n
@@ -74,15 +66,8 @@ classdef Calibrator < handle
 			obj.options = struct();
 		end
 
-		function add_backup_x0(obj, varargin)
-			for ii = 1:numel(varargin)
-				obj.x0 = [obj.x0, varargin{ii}];
-			end
-		end
-
 		function set_fscale(obj, fscale_in)
-			assert(numel(fscale_in) == obj.n, 'Invalid number of scaling factors');
-			obj.fscale = fscale_in;
+			obj.fscale = fscale_in(:);
 		end
 
 		function set_param_bounds(obj, varargin)
@@ -145,9 +130,6 @@ classdef Calibrator < handle
 				end
 			end
 			fprintf('\n    norm: %f\n', norm(dv))
-			obj.dnorm = norm(dv);
-
-			dv = obj.adjust_dv(results, current_params, dv);
 
 			obj.reset_param_options(current_params);
 			obj.iter = obj.iter + 1;
@@ -155,11 +137,6 @@ classdef Calibrator < handle
 
 		function value = get_results_value(obj, results, variable_name)
 			value = nan;
-		end
-
-		function dv = adjust_dv(obj, results, current_params, dv)
-			% Do nothing unless overriden
-			dv = dv;
 		end
 
 		function solver_args = get_args(obj)
@@ -188,14 +165,5 @@ classdef Calibrator < handle
 				params.set(props{ip}, obj.options.(props{ip}), quiet);
 			end
 		end
-
-		function x0curr = get_next_x0(obj)
-            if (obj.ix_curr <= numel(obj.x0))
-                x0curr = obj.x0{obj.ix_curr};
-                obj.ix_curr = obj.ix_curr + 1;
-            else
-                x0curr = [];
-            end
-        end
 	end
 end

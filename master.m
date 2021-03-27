@@ -24,19 +24,11 @@ runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
 runopts.name_to_run = '';
-runopts.number = [1];
+runopts.number = [2];
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE
 % -------------------------------------------------------------------------
-% Check current working directory
-[~, currdir] = fileparts(pwd());
-if ~strcmp(currdir, 'Discrete_HA')
-    msg = 'The user must cd into the Discrete_HA directory';
-    bad_dir = MException('Discrete_HA:master', msg);
-    throw(bad_dir);
-end
-
 % Get task id if running on server
 server_array_id = str2num(getenv('SLURM_ARRAY_TASK_ID'));
 running_on_server = ~isempty(server_array_id);
