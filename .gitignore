@@ -6,6 +6,7 @@
 *.sublime-workspace
 *.sublime-project
 *.asv
+*.pdf
 
 # directories
 input
@@ -14,3 +15,4 @@ batch/sbatch
 batch/mfiles
 output
 **old
+docs
