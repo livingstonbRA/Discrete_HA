@@ -125,5 +125,5 @@ def save_tex_table(dirpath, tableno):
 if __name__ == '__main__':
 	dirpath = sys.argv[1]
 
-	for it in range(1, 10):
+	for it in range(1, 12):
 		save_tex_table(dirpath, it)
