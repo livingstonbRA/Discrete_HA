@@ -52,8 +52,17 @@ function model = solve_EGP(p, grids, heterogeneity,...
 
     % Extend to full state space
     newdims = [ss_dims p.nyT];
-    newdims(newdims == size(xprime_s)) = 1;
+    [n1, n2, n3, n4, n5] = size(xprime_s);
+    dims0 = [n1, n2, n3, n4, n5];
+    newdims(newdims == dims0) = 1;
     xprime_s = repmat(xprime_s, newdims);
+
+    function out = extend_dims(arr, newdims)
+    [n1, n2, n3, n4] = size(arr);
+    adims = [n1, n2, n3, n4];
+    newdims(newdims == adims) = 1;
+    out = repmat(arr, newdims);
+end
 
     %% ----------------------------------------------------
     % CONSTRUCT EXPECTATIONS MATRIX, ETC...

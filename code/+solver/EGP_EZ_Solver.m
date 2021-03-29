@@ -327,6 +327,8 @@ function out = extend_interp(old_interpolant, qvals, gridmin,...
 end
 
 function out = extend_dims(arr, newdims)
-    newdims(newdims == size(arr)) = 1;
+	[n1, n2, n3, n4] = size(arr);
+	adims = [n1, n2, n3, n4];
+    newdims(newdims == adims) = 1;
     out = repmat(arr, newdims);
 end
