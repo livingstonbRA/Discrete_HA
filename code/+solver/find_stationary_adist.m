@@ -1,22 +1,17 @@
 function modelupdate = find_stationary_adist(...
-    p, model, income, grids, heterogeneity, varargin)
+    p, model, income, grids, heterogeneity)
     % Finds the stationary distribution and transition matrix for a given
     % grids.a.vec.
     %
     % Brian Livingston, 2020
     % livingstonb@uchicago.edu
 
-    parser = inputParser;
-    addParameter(parser, 'quiet', false);
-    parse(parser, varargin{:});
-    quiet = parser.Results.quiet;
-
     %% ----------------------------------------------------------------
     % FIND STATIONARY DISTRIBUTION
     % -----------------------------------------------------------------
     modelupdate = model;
 
-    if ~quiet
+    if ~p.calibrating
         fprintf(' Computing state-to-state transition probabilities... \n');
     end
 
@@ -25,11 +20,11 @@ function modelupdate = find_stationary_adist(...
     % Cash-on-hand as function of (a,yP,yF,yT)
     % start from generic 'a' distribution (even with returns het)
     x = grids.a.vec + income.netymat_broadcast;
-    x = repmat(x, [1, 1, 1, p.nb]);
+    x = repmat(x, [1, 1, 1, p.nz]);
     
     % Saving interpolated onto this grid
-    sav = zeros(nx,p.nyP,p.nyF,p.nb,p.nyT);
-    for ib = 1:p.nb
+    sav = zeros(nx,p.nyP,p.nyF,p.nz,p.nyT);
+    for ib = 1:p.nz
     for iyF = 1:p.nyF
     for iyP = 1:p.nyP
         x_iyP_iyF_ib = x(:,iyP,iyF,ib,:);
@@ -45,39 +40,39 @@ function modelupdate = find_stationary_adist(...
         nx, sav, heterogeneity.R_broadcast);
 
     % Stationary distribution over states
-    if ~quiet
+    if ~p.calibrating
         fprintf(' Finding ergodic distribution...\n');
     end
     q = get_distribution(p, grids, income, nx,...
-        modelupdate.statetrans, heterogeneity, quiet);
+        modelupdate.statetrans, heterogeneity);
 
-    modelupdate.pmf = reshape(full(q'), [nx, p.nyP, p.nyF, p.nb]);
+    modelupdate.pmf = reshape(full(q'), [nx, p.nyP, p.nyF, p.nz]);
 
     tmp = reshape(full(q'), nx, []);
     modelupdate.pmf_a = sum(tmp, 2);
     
     % Get distribution over (x,yP,yF,beta)
     xdist = kron(income.yTdist, reshape(modelupdate.pmf, nx, []));
-    modelupdate.xdist = reshape(xdist, [nx*p.nyT p.nyP p.nyF p.nb]);
+    modelupdate.xdist = reshape(xdist, [nx*p.nyT p.nyP p.nyF p.nz]);
     
     % Extend xvals to (nx*p.nyT,p.nyP,p.nyF,p.nyT)
     incvals = reshape(income.ymat, [p.nyP*p.nyF p.nyT]);
     incvals = permute(incvals, [2 1]);
     incvals = kron(incvals, ones(nx,1));
     incvals = reshape(incvals, [nx*p.nyT p.nyP p.nyF]);
-    modelupdate.y_x = repmat(incvals, [1 1 1 p.nb]);
+    modelupdate.y_x = repmat(incvals, [1 1 1 p.nz]);
     modelupdate.nety_x = income.lumptransfer + (1-p.labtaxlow)*incvals...
         - p.labtaxhigh*max(incvals-income.labtaxthresh,0);
-    modelupdate.nety_x = repmat(modelupdate.nety_x, [1 1 1 p.nb]);
-    modelupdate.xvals = repmat(grids.a.vec, [p.nyT p.nyP p.nyF p.nb])...
+    modelupdate.nety_x = repmat(modelupdate.nety_x, [1 1 1 p.nz]);
+    modelupdate.xvals = repmat(grids.a.vec, [p.nyT p.nyP p.nyF p.nz])...
         + modelupdate.nety_x;
 
     %% ----------------------------------------------------------------
     % POLICY FUNCTIONS ETC...
     % -----------------------------------------------------------------
     % Get saving policy function defined on xgrid
-    modelupdate.sav_x = zeros(p.nx_DST*p.nyT,p.nyP,p.nyF,p.nb);
-    for ib = 1:p.nb
+    modelupdate.sav_x = zeros(p.nx_DST*p.nyT,p.nyP,p.nyF,p.nz);
+    for ib = 1:p.nz
     for iyF = 1:p.nyF
     for iyP = 1:p.nyP 
         modelupdate.sav_x(:,iyP,iyF,ib) = modelupdate.savinterp{iyP,iyF,ib}(...
@@ -95,7 +90,7 @@ function modelupdate = find_stationary_adist(...
     % Mean assets
 	modelupdate.mean_a = dot(modelupdate.pmf_a, grids.a.vec);
 
-    if ~quiet
+    if ~p.calibrating
         fprintf(' A/Y = %2.5f\n', modelupdate.mean_a);
     end
 end
@@ -119,13 +114,13 @@ function trans = get_transition_matrix(p, income, grids, nx, sav, R_bc)
     if p.Bequests
         interp_death = interp_live;
     else
-        interp_death = sparse(nx*p.nyP*p.nyF*p.nb,nx);
+        interp_death = sparse(nx*p.nyP*p.nyF*p.nz,nx);
         interp_death(:,grids.i0) = 1;
     end
 
-    trans = sparse(nx*p.nyP*p.nyF*p.nb, nx*p.nyP*p.nyF*p.nb);
+    trans = sparse(nx*p.nyP*p.nyF*p.nz, nx*p.nyP*p.nyF*p.nz);
     col = 1;
-    for ib = 1:p.nb
+    for ib = 1:p.nz
     for iyF = 1:p.nyF
     for iyP = 1:p.nyP
         transcol_live = kron(income.ytrans_live(:,col), ones(nx,1));
@@ -147,8 +142,8 @@ end
 % iTERATIVE METHOD TO FIND STATIONARY DISTRIBUTION
 % -----------------------------------------------------------------
 function q = get_distribution(p, grids, income, nx, statetrans,...
-    heterogeneity, quiet)
-	q = ones(nx,p.nyP,p.nyF,p.nb);
+    heterogeneity)
+	q = ones(nx,p.nyP,p.nyF,p.nz);
 
     % Create valid initial distribution
     yPdist = reshape(income.yPdist, [1,p.nyP]);
@@ -159,7 +154,7 @@ function q = get_distribution(p, grids, income, nx, statetrans,...
     % heterogeneity and borrowing, lowest asset points cannot
     % be reached or left by some households)
     if numel(p.r) > 1
-        for ib = 1:p.nb
+        for ib = 1:p.nz
             tmp1 = sum(reshape(q(:,:,:,ib), [], 1));
             for ia = 1:p.nx
                 if grids.a.vec(ia) < grids.s.vec(1) * p.R(ib)
@@ -182,7 +177,7 @@ function q = get_distribution(p, grids, income, nx, statetrans,...
         diff = norm(z-q);
         q = z;
         
-        if ~quiet && (mod(iter,500) == 0)
+        if ~p.calibrating && (mod(iter,500) == 0)
             fprintf('  Diff = %5.3E, Iteration = %u \n',diff,iter);
         end
         iter = iter + 1;

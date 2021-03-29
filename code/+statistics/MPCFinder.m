@@ -41,7 +41,7 @@ classdef MPCFinder < handle
 			basemodel, models)
 			import statistics.Statistics.sfill
 
-			obj.Nstates = p.nx_DST * p.nyP * p.nyF * p.nb;
+			obj.Nstates = p.nx_DST * p.nyP * p.nyF * p.nz;
 			obj.basemodel = basemodel;
 			obj.models = models;
 			obj.fspace = fundef({'spli',grids.a.vec,0,1});
@@ -49,7 +49,7 @@ classdef MPCFinder < handle
 			obj.income = income;
 
 			obj.xgrid_yT = repmat(grids.a.vec + income.netymat_broadcast,...
-				[1, 1, 1, p.nb, 1]);
+				[1, 1, 1, p.nz, 1]);
 			obj.grids = grids;
 			obj.r_mat = heterogeneity.r_broadcast;
 
@@ -158,7 +158,7 @@ classdef MPCFinder < handle
 			% Computes consumption policy function after taking expectation to get
 		    % rid of yT dependence
 		    con = zeros(size(x_mpc));
-		    for ib = 1:obj.p.nb
+		    for ib = 1:obj.p.nz
 		    for iyF = 1:obj.p.nyF
 		    for iyP = 1:obj.p.nyP
 		        x_iyP_iyF_iyT = x_mpc(:,iyP,iyF,ib,:);
@@ -321,9 +321,9 @@ classdef MPCFinder < handle
 
 			% get saving policy function
 			imodel = is - ii + 1;
-			sav = zeros(p.nx_DST,p.nyP,p.nyF,p.nb,p.nyT);
+			sav = zeros(p.nx_DST,p.nyP,p.nyF,p.nz,p.nyT);
 			reshape_vec = [p.nx_DST 1 1 1 p.nyT];
-			for ib = 1:p.nb
+			for ib = 1:p.nz
 			for iyF = 1:p.nyF
 			for iyP = 1:p.nyP
 				x_iyP_iyF_iyT = reshape(x_mpc(:,iyP,iyF,1,:),[],1);
@@ -358,7 +358,7 @@ classdef MPCFinder < handle
 
 		    % now construct transition matrix
 		    transition = sparse(obj.Nstates,obj.Nstates);
-		    for col = 1:p.nyP*p.nyF*p.nb
+		    for col = 1:p.nyP*p.nyF*p.nz
 		        newblock_live = ytrans_live_long(:,col) .* asset_interp;
 		        newblock_death = ytrans_death_long(:,col) .* interp_death;
 		        transition(:,p.nx_DST*(col-1)+1:p.nx_DST*col) = ...

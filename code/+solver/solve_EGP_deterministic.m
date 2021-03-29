@@ -6,12 +6,7 @@ function norisk = solve_EGP_deterministic(p, grids,...
     % Brian Livingston, 2020
     % livingstonb@uchicago.edu
 
-    parser = inputParser;
-    addParameter(parser, 'quiet', false);
-    parse(parser, varargin{:});
-    quiet = parser.Results.quiet;
-
-    sgrid_bc = repmat(grids.s.vec, 1, p.nb);
+    sgrid_bc = repmat(grids.s.vec, 1, p.nz);
     sgrid_tax = p.compute_savtax(sgrid_bc);
     msavtaxrate = (1 + p.savtax .* (sgrid_bc >= p.savtaxthresh));
 
@@ -30,7 +25,7 @@ function norisk = solve_EGP_deterministic(p, grids,...
     con = (r_bc_adj + tempt_adj) .* grids.x.matrix_norisk;
     con = con(:);
     con(con<=0) = min(con(con>0));
-    con = reshape(con, [p.nx, p.nb]);
+    con = reshape(con, [p.nx, p.nz]);
 
     iter = 0;
     cdiff = 1000;
@@ -46,7 +41,7 @@ function norisk = solve_EGP_deterministic(p, grids,...
             p.bequest_luxury, sgrid_bc);
 
         expectation = Emat * (muc_next(:) - tempt_next(:));
-        emuc_live = R_bc .* beta_bc .* reshape(expectation, [p.nx, p.nb]);
+        emuc_live = R_bc .* beta_bc .* reshape(expectation, [p.nx, p.nz]);
 
         muc_today = (1 - p.dieprob) * emuc_live ./ msavtaxrate ...
             + p.dieprob .* beq_next;
@@ -55,8 +50,8 @@ function norisk = solve_EGP_deterministic(p, grids,...
         
         cash1 = con_today + sgrid_bc + sgrid_tax;
         
-        sav = zeros(p.nx, p.nb);
-        for ib = 1:p.nb
+        sav = zeros(p.nx, p.nz);
+        for ib = 1:p.nz
             savinterp = griddedInterpolant(cash1(:,ib), grids.s.vec, 'linear');
             sav(:,ib) = savinterp(grids.x.matrix_norisk(:,ib));
 
@@ -67,7 +62,7 @@ function norisk = solve_EGP_deterministic(p, grids,...
         con = grids.x.matrix_norisk - sav - p.compute_savtax(sav);
         
         cdiff = max(abs(con(:)-conlast(:)));
-        if ~quiet && ((mod(iter,500) == 0) || (iter == 1))
+        if ~p.calibrating && ((mod(iter,500) == 0) || (iter == 1))
             fprintf(' EGP for norisk model, iteration %d, norm = %g\n', iter, cdiff)
         end
     end
@@ -79,7 +74,7 @@ function norisk = solve_EGP_deterministic(p, grids,...
         fprintf(' No convergence for norisk model.\n')
         norisk.complete = false;
     else
-        for ib = 1:p.nb
+        for ib = 1:p.nz
             norisk.coninterp{ib} = griddedInterpolant(...
                 grids.x.matrix_norisk(:,ib), con(:,ib), 'linear');
             norisk.savinterp{ib} = griddedInterpolant(...

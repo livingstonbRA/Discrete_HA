@@ -63,7 +63,7 @@ classdef EGP_EZ_Solver < handle
 
 		    obj.xp_s = p.R * grids.s.matrix + income.netymat_broadcast;
 
-		    obj.ss_dims = [p.nx, p.nyP, p.nyF, p.nb];
+		    obj.ss_dims = [p.nx, p.nyP, p.nyF, p.nz];
 		    obj.ss_dims_aug = [obj.ss_dims p.nyT];
 
 		    obj.repmat_to_state_space = ...
@@ -145,7 +145,7 @@ classdef EGP_EZ_Solver < handle
 			obj.V_xp = zeros(obj.ss_dims_aug);
 			reshape_nx_nyT = @(arr) reshape(arr, [obj.p.nx, 1, 1, 1, obj.p.nyT]);
 
-			for ib  = 1:obj.p.nb
+			for ib  = 1:obj.p.nz
             for iyF = 1:obj.p.nyF
             for iyP = 1:obj.p.nyP
 	            % xp_s_ib_iyF_iyP = xp_s(:,iyP,iyF,ib,:);
@@ -205,7 +205,7 @@ classdef EGP_EZ_Solver < handle
 	    function sav = get_sav_x_by_interpolating_x_s(obj, x_s)
 	    	% interpolate from x(s) to get s(x)
 	        sav = zeros(obj.ss_dims);
-	        for ib  = 1:obj.p.nb
+	        for ib  = 1:obj.p.nz
 	        for iyF = 1:obj.p.nyF
 	        for iyP = 1:obj.p.nyP
 	            savinterp = griddedInterpolant(x_s(:,iyP,iyF,ib),...
@@ -222,7 +222,7 @@ classdef EGP_EZ_Solver < handle
 	    function update_ezval(obj)
 	    	% interpolate adjusted expected value function on x grid
 	        ezval_integrand = zeros(obj.ss_dims_aug);
-	        for ib = 1:obj.p.nb
+	        for ib = 1:obj.p.nz
 	        for iyF = 1:obj.p.nyF
 	        for iyP = 1:obj.p.nyP
 	            xp_iyP_iyF_ib = obj.xp_s(:,iyP,iyF,1,:);
@@ -280,15 +280,15 @@ classdef EGP_EZ_Solver < handle
 	    function model = return_model(obj)
 	    	model = struct();
 	    	model.sav = obj.sav;
-		    model.con = reshape(obj.con,[obj.p.nx obj.p.nyP obj.p.nyF obj.p.nb]);
-		    model.V = reshape(obj.V,[obj.p.nx obj.p.nyP obj.p.nyF obj.p.nb]);
+		    model.con = reshape(obj.con,[obj.p.nx obj.p.nyP obj.p.nyF obj.p.nz]);
+		    model.V = reshape(obj.V,[obj.p.nx obj.p.nyP obj.p.nyF obj.p.nz]);
 		    
 		    % create interpolants from optimal policy functions
 		    % and find saving values associated with xvals
-		    model.savinterp = cell(obj.p.nyP,obj.p.nyF,obj.p.nb);
-		    model.coninterp = cell(obj.p.nyP,obj.p.nyF,obj.p.nb);
-		    model.coninterp_mpc = cell(obj.p.nyP,obj.p.nyF,obj.p.nb);
-		    for ib = 1:obj.p.nb
+		    model.savinterp = cell(obj.p.nyP,obj.p.nyF,obj.p.nz);
+		    model.coninterp = cell(obj.p.nyP,obj.p.nyF,obj.p.nz);
+		    model.coninterp_mpc = cell(obj.p.nyP,obj.p.nyF,obj.p.nz);
+		    for ib = 1:obj.p.nz
 		    for iyF = 1:obj.p.nyF
 		    for iyP = 1:obj.p.nyP
 		        model.savinterp{iyP,iyF,ib} = ...

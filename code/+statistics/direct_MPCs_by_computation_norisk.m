@@ -15,8 +15,8 @@ function norisk_mpcs1_a_direct = direct_MPCs_by_computation_norisk(...
         end
         
         x_mpc = grids.x.matrix_norisk + mpcamount;
-        con = zeros(p.nx_DST, p.nb);
-        for ib = 1:p.nb
+        con = zeros(p.nx_DST, p.nz);
+        for ib = 1:p.nz
             con(:,ib) = norisk.coninterp{ib}(x_mpc(:,ib));
         end
         

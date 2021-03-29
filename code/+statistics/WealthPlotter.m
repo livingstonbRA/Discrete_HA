@@ -14,7 +14,7 @@ classdef WealthPlotter
 	methods
 		function obj = WealthPlotter(params, agrid, pmf_a)
 			obj.p = params;
-			obj.dims = [obj.p.nx_DST, obj.p.nyP, obj.p.nyF, obj.p.nb];
+			obj.dims = [obj.p.nx_DST, obj.p.nyP, obj.p.nyF, obj.p.nz];
 
 			obj.agrid = agrid;
 			obj.pmf_a = pmf_a;

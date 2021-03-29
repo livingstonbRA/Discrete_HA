@@ -483,7 +483,7 @@ function [params, all_names] = parameters(runopts)
     %----------------------------------------------------------------------
     % ATTACH CALIBRATOR
     %----------------------------------------------------------------------
-    if params.calibrate
+    if params.calibrating
         calibration = calibrations(params.index);
         calibrator = DHACalibrator(params, calibration.variables,...
             calibration.target_names, calibration.target_values);

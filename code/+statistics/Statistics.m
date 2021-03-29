@@ -163,7 +163,7 @@ classdef Statistics < handle
 		    obj.mean_gross_y_annual.value = dot(obj.model.y_x(:) * obj.freq, xdist);
 			obj.numeraire_in_dollars.value = sprintf('$%g', obj.p.numeraire_in_dollars);
 
-		    if (obj.p.nb == 1) && (~obj.p.EpsteinZin) && isequal(obj.p.temptation, 0) ...
+		    if (obj.p.nz == 1) && (~obj.p.EpsteinZin) && isequal(obj.p.temptation, 0) ...
 		    	&& (obj.p.bequest_weight == 0)
 		        tmp = (1-obj.p.dieprob) * obj.p.beta0 * obj.p.R;
 		        obj.mpc_RA.value = obj.p.R * tmp ^ (-1 / obj.p.risk_aver) - 1;
@@ -229,7 +229,7 @@ classdef Statistics < handle
 			% Wealth / (quarterly earnings) < epsilon
 			a_over_inc = obj.grdDST.a.vec ./ ...
 				(obj.income.netymat_broadcast * (obj.p.freq / 4));
-		    a_over_inc = repmat(a_over_inc, [1, 1, 1, obj.p.nb, 1]);
+		    a_over_inc = repmat(a_over_inc, [1, 1, 1, obj.p.nz, 1]);
 		    pmf_AY = obj.pmf(:) * shiftdim(obj.income.yTdist, -1);
 		    sorted_mat = sortrows([a_over_inc(:), pmf_AY(:)]);
 

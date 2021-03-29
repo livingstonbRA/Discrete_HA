@@ -1,5 +1,5 @@
 function model = solve_EGP(p, grids, heterogeneity,...
-    income, futureshock, periods_until_shock, nextmodel, varargin)
+    income, futureshock, periods_until_shock, nextmodel)
     % This function performs the method of endogenous grid points to find
     % saving and consumption policy functions. It also calls 
     % find_stationary() to compute the stationary distribution over states 
@@ -14,17 +14,12 @@ function model = solve_EGP(p, grids, heterogeneity,...
     % Brian Livingston, 2020
     % livingstonb@uchicago.edu
 
-    parser = inputParser;
-    addParameter(parser, 'quiet', false);
-    parse(parser, varargin{:});
-    quiet = parser.Results.quiet;
-
     %% ----------------------------------------------------
     % USEFUL OBJECTS/ARRAYS
     % -----------------------------------------------------
     nextmpcshock = (periods_until_shock == 1) * futureshock;
 
-    ss_dims = [p.nx, p.nyP, p.nyF, p.nb];
+    ss_dims = [p.nx, p.nyP, p.nyF, p.nz];
     R_bc = heterogeneity.R_broadcast;
 
     % If expected future shock is negative, need to raise today's
@@ -35,7 +30,7 @@ function model = solve_EGP(p, grids, heterogeneity,...
 
     adj_borr_lims_bc = adj_borr_lims(:);
     if numel(adj_borr_lims_bc) == 1
-        adj_borr_lims_bc = repmat(adj_borr_lims_bc, p.nb, 1);
+        adj_borr_lims_bc = repmat(adj_borr_lims_bc, p.nz, 1);
     end
     adj_borr_lims_bc = shiftdim(adj_borr_lims_bc, -3);
 
@@ -109,7 +104,7 @@ function model = solve_EGP(p, grids, heterogeneity,...
         conupdate = xmat - sav - sav_tax;
 
         cdiff = max(abs(conupdate(:)-conlast(:)));
-        if (mod(iter, 50) == 0) && ~quiet
+        if (mod(iter, 50) == 0) && ~p.calibrating
             disp(['  EGP Iteration ' int2str(iter), ' max con fn diff is ' num2str(cdiff)]);
         end
     end
@@ -129,11 +124,11 @@ function model = solve_EGP(p, grids, heterogeneity,...
     % and find saving values associated with xvals
     % max_sav = (p.borrow_lim - min(income.netymat(:)) - nextmpcshock) ./ p.R;
 
-    model.savinterp = cell(p.nyP,p.nyF,p.nb);
-    model.coninterp = cell(p.nyP,p.nyF,p.nb);
-    model.coninterp_ext = cell(p.nyP,p.nyF,p.nb);
-    model.coninterp_mpc = cell(p.nyP,p.nyF,p.nb);
-    for ib = 1:p.nb
+    model.savinterp = cell(p.nyP,p.nyF,p.nz);
+    model.coninterp = cell(p.nyP,p.nyF,p.nz);
+    model.coninterp_ext = cell(p.nyP,p.nyF,p.nz);
+    model.coninterp_mpc = cell(p.nyP,p.nyF,p.nz);
+    for ib = 1:p.nz
     for iyF = 1:p.nyF
     for iyP = 1:p.nyP
         model.savinterp{iyP,iyF,ib} = griddedInterpolant(...
@@ -182,7 +177,7 @@ function c_xprime = get_c_xprime(p, grids, xp_s, nextmodel, conlast,...
 	c_xprime = zeros(size(xp_s));
     dims_nx_nyT = [p.nx, 1, 1, 1, p.nyT];
 
-	for ib  = 1:p.nb
+	for ib  = 1:p.nz
     for iyF = 1:p.nyF
     for iyP = 1:p.nyP
     	xp_s_ib_iyF_iyP = xp_s(:,iyP,iyF,ib,:);
@@ -218,7 +213,7 @@ function muc_s = get_marginal_util_cons(...
 
     % Integrate
     expectation = Emat * mucnext * income.yTdist;
-    expectation = reshape(expectation, [p.nx, p.nyP, p.nyF, p.nb]);
+    expectation = reshape(expectation, [p.nx, p.nyP, p.nyF, p.nz]);
 
     muc_c_today = R_bc .* betagrid_bc .* expectation;
     muc_beq = aux.utility_bequests1(p.bequest_curv, p.bequest_weight,...
@@ -234,8 +229,8 @@ function sav = get_saving_policy(p, grids, x_s, nextmpcshock, R_bc,...
 	% cash-on-hand grid
 
     sav = zeros(size(x_s));
-    xstar = zeros(p.nyP,p.nyF,p.nb);
-    for ib  = 1:p.nb
+    xstar = zeros(p.nyP,p.nyF,p.nz);
+    for ib  = 1:p.nz
     for iyF = 1:p.nyF
     for iyP = 1:p.nyP
         adj = xmat(:,iyP,iyF,ib) < x_s(1,iyP,iyF,ib);

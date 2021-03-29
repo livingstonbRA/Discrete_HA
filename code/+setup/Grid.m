@@ -93,7 +93,7 @@ classdef Grid < handle
 			minyT = reshape(min(income.netymat, [], 2), [1 params.nyP params.nyF]);
 			xgrid = obj.R_broadcast .* obj.s.matrix + minyT;
 			if numel(params.r) == 1
-				xgrid = repmat(xgrid, [1 1 1 params.nb]);
+				xgrid = repmat(xgrid, [1 1 1 params.nz]);
 			end
 
 			obj.x.matrix = xgrid;
@@ -104,7 +104,7 @@ classdef Grid < handle
 			xmatrix_norisk = reshape(xmatrix_norisk, obj.nx, []);
 
 			if numel(params.r) == 1
-				xmatrix_norisk = repmat(xmatrix_norisk, [1 params.nb]);
+				xmatrix_norisk = repmat(xmatrix_norisk, [1 params.nz]);
 			end
 
 			obj.x.matrix_norisk = xmatrix_norisk;
@@ -119,7 +119,7 @@ classdef Grid < handle
 				+ min(params.R) * (obj.s.vec >= 0);
 			obj.a.vec = R_selected .* obj.s.vec;
 
-		 	obj.a.matrix = repmat(obj.a.vec, [1, params.nyP, params.nyF, params.nb]);
+		 	obj.a.matrix = repmat(obj.a.vec, [1, params.nyP, params.nyF, params.nz]);
 		end
 	end
 

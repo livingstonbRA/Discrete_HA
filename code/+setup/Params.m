@@ -139,15 +139,15 @@ classdef Params < handle
         betawidth = 0; % distance between beta's
         beta_grid_forced = []; % overrides all other beta values if used
 
-        % Length of z-dimension heterogeneity (is later set equal to nz--should recode as nz!)
-        nb = 1;
+        % Length of z-dimension heterogeneity
+        nz = 1;
 
         % Probability of switch in z-dimension
         prob_zswitch = 0;
         zdist_forced;
 
         % Calibration
-        calibrate; % boolean
+        calibrating; % boolean
         calibrate_maxiter = 60;
         calibrate_tol = 1e-6;
         calibrator; % DHACalibrator object
@@ -199,7 +199,7 @@ classdef Params < handle
             obj.savematpath = runopts.savematpath;
             
             % Options
-            obj.calibrate = runopts.calibrate;
+            obj.calibrating = runopts.calibrate;
             obj.Simulate = runopts.Simulate;
             obj.MPCs = runopts.MPCs;
             obj.MPCs_news = runopts.MPCs_news;
@@ -239,9 +239,9 @@ classdef Params < handle
                 quiet = false;
             end
 
-            if ~quiet
-                disp(strcat(field, sprintf(" has been reset to %.9f", new_val)));
-            end
+            % if ~quiet
+            %     disp(strcat(field, sprintf(" has been reset to %.9f", new_val)));
+            % end
         end
 
         function make_adjustments(obj)

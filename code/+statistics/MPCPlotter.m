@@ -20,7 +20,7 @@ classdef MPCPlotter < handle
 	methods
 		function obj = MPCPlotter(params, grids, mpcs)
 			obj.p = params;
-			obj.dims = [size(grids,1), obj.p.nyP, obj.p.nyF, obj.p.nb];
+			obj.dims = [size(grids,1), obj.p.nyP, obj.p.nyF, obj.p.nz];
 
 			obj.grids = grids;
 			obj.mpcs = mpcs;

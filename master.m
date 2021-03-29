@@ -9,7 +9,7 @@ close all;
 % SET OPTIONS
 % -------------------------------------------------------------------------
 % options
-runopts.calibrate = true; % wrap code in nonlinear solver
+runopts.calibrate = false; % wrap code in nonlinear solver
 runopts.fast = false; % very small asset and income grids for testing
 runopts.Simulate = false; % also solve distribution via simulation
 runopts.MakePlots = false; % not used
@@ -24,7 +24,7 @@ runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
 runopts.name_to_run = '';
-runopts.number = [1];
+runopts.number = [2];
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE
@@ -65,7 +65,7 @@ addpath(fullfile('code', 'aux_lib'));
 % -------------------------------------------------------------------------
 fprintf('\nParameterization "%s" was chosen.\n', params.name)
 
-if params.calibrate
+if params.calibrating
     % Calibrate with nonlinear solver
     disp('Beginning model calibration...')
     calibrator = params.calibrator;
@@ -74,10 +74,12 @@ if params.calibrate
     solver_args = params.calibrator.get_args();
     calibrated_params = lsqnonlin(params.calibrator.solver_handle,...
         solver_args{:}, options);
+
+    params.calibrating = false;
 end
 
 % Final run
-results = main(params, 'iterating', false);
+results = main(params);
 fprintf('Finished parameterization %s\n', params.name)
 
 %% ------------------------------------------------------------------------

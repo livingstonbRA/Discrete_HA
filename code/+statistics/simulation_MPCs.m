@@ -32,7 +32,7 @@ function MPCs = simulation_MPCs(p,simvals,income,basemodel,grids)
             end
 
             for iyF = 1:p.nyF
-            for ib = 1:p.nb
+            for ib = 1:p.nz
             for iyP = 1:p.nyP
                 below_grid = xsim_mpc(:,it)<grids.a.matrix(1,iyP,iyF);
                 idx = yPindsim_mpc(:,it)==iyP & betaindsim_mpc(:,it)==ib & yFindsim(:)==iyF;

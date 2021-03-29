@@ -102,7 +102,7 @@ function sim_results = simulate(p,income,model,grids,heterogeneity)
         end
         
         for iyF = 1:p.nyF
-        for ib = 1:p.nb
+        for ib = 1:p.nz
         for iyP = 1:p.nyP
             idx = (yPindsim(:,it)==iyP) & (betaindsim(:,it)==ib) & (yFindsim(:)==iyF);
             ssim(idx,it) = model.savinterp{iyP,iyF,ib}(xsim(idx,it));

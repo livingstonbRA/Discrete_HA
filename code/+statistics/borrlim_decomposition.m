@@ -19,7 +19,7 @@ function decomp = borrlim_decomposition(p_baseline, results_baseline,...
     end
 
     % Dimensions other than assets
-    n_het = p_baseline.nyP * p_baseline.nyF * p_baseline.nb;
+    n_het = p_baseline.nyP * p_baseline.nyF * p_baseline.nz;
 
     %% --------------------------------------------------------------------
     % RA model WITHOUT borrowing constraint
@@ -34,7 +34,7 @@ function decomp = borrlim_decomposition(p_baseline, results_baseline,...
     RA_with_BC = struct();
 
 	mpcs = results_baseline.norisk.mpcs1_a_direct{5};
-    mpcs = reshape(mpcs, [p_baseline.nx_DST, 1, 1, p_baseline.nb]);
+    mpcs = reshape(mpcs, [p_baseline.nx_DST, 1, 1, p_baseline.nz]);
     mpcs = repmat(mpcs, [1, p_baseline.nyP, p_baseline.nyF, 1]);
     RA_with_BC.mpcs = mpcs;
 

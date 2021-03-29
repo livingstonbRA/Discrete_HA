@@ -70,7 +70,7 @@ classdef MPCSimulator < handle
 		end
 
 		function simulate(obj, p, income, grids, heterogeneity, basemodel)
-			obj.agrid_long = repmat(grids.a.vec, p.nyP*p.nyF*p.nb, 1);
+			obj.agrid_long = repmat(grids.a.vec, p.nyP*p.nyF*p.nz, 1);
 			obj.draw_from_stationary_dist(p, grids, basemodel);
 			obj.simulate_exog_transitions(p, income, heterogeneity);
 			obj.simulate_decisions(p, grids, basemodel, 0); % baseline
@@ -86,9 +86,9 @@ classdef MPCSimulator < handle
 			cumdist = cumsum(basemodel.pmf(:));
 
 			% Indexes
-		    yPind_trans = repmat(kron((1:p.nyP)', ones(p.nx_DST, 1)), p.nyF*p.nb, 1);
-		    yFind_trans = repmat(kron((1:p.nyF)', ones(p.nx_DST*p.nyP, 1)), p.nb, 1);
-		    zind_trans = kron((1:p.nb)', ones(p.nx_DST*p.nyP*p.nyF, 1));
+		    yPind_trans = repmat(kron((1:p.nyP)', ones(p.nx_DST, 1)), p.nyF*p.nz, 1);
+		    yFind_trans = repmat(kron((1:p.nyF)', ones(p.nx_DST*p.nyP, 1)), p.nz, 1);
+		    zind_trans = kron((1:p.nz)', ones(p.nx_DST*p.nyP*p.nyF, 1));
 
 			obj.a1 = zeros(obj.Nsim,1);
 		    for ip = 1:obj.Npartition
@@ -158,7 +158,7 @@ classdef MPCSimulator < handle
 	                obj.xsim(:,it) = obj.asim(:,it-1) + obj.ynetsim(:,it);
 	            end
 	            
-	            for ib = 1:p.nb
+	            for ib = 1:p.nz
 	            for iyF = 1:p.nyF
 	            for iyP = 1:p.nyP
 	            	idx = obj.yPindsim(:,it)==iyP & obj.yFindsim==iyF & obj.zindsim(:,it)==ib;
@@ -212,7 +212,7 @@ classdef MPCSimulator < handle
             obj.wpercentiles = prctile(obj.asim(:,3), p.percentiles);
 
 		    % Rank-rank correlation between assets and z
-		    if p.nb == 1
+		    if p.nz == 1
 		    	obj.assets_z_rank_corr = NaN;
 		    else
 		    	asset_ranks = obj.wealth_pctile_interpolant(obj.asim(:,3));

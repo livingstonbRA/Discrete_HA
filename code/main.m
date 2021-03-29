@@ -10,16 +10,11 @@ function results = main(p, varargin)
 
     results = struct('norisk',[],'sim',[]);
 
-    parser = inputParser;
-    addOptional(parser, 'iterating', false);
-    parse(parser, varargin{:});
-    iterating = parser.Results.iterating;
-
     %% --------------------------------------------------------------------
     % HETEROGENEITY IN PREFERENCES/RETURNS
     % ---------------------------------------------------------------------
     heterogeneity = setup.Prefs_R_Heterogeneity(p);
-    p.set("nb", heterogeneity.nz, true);
+    p.set("nz", heterogeneity.nz, true);
 
     %% --------------------------------------------------------------------
     % INCOME
@@ -55,10 +50,10 @@ function results = main(p, varargin)
         periods_until_shock = 0;
         basemodel = solver.solve_EGP(...
             p, grdEGP, heterogeneity, income, nextmpcshock,...
-            periods_until_shock, [], 'quiet', iterating);
+            periods_until_shock, []);
     end
     basemodel = solver.find_stationary_adist(...
-        p, basemodel, income, grdDST, heterogeneity, 'quiet', iterating);
+        p, basemodel, income, grdDST, heterogeneity);
 
     if basemodel.EGP_cdiff > p.tol_iter
         % EGP did not converge for beta, escape this parameterization
@@ -133,7 +128,7 @@ function results = main(p, varargin)
             nextmpcshock = (tlshock == 2) * p.shocks(ishock);
             mpcmodels{ishock,tlshock} = solver.solve_EGP(...
                 p, grdEGP, heterogeneity, income, nextmpcshock,...
-                tlshock-1, mpcmodels{ishock,tlshock-1}, 'quiet', iterating);
+                tlshock-1, mpcmodels{ishock,tlshock-1});
         end
     end
 
@@ -162,7 +157,7 @@ function results = main(p, varargin)
     % DECOMPOSITION 1 (DECOMP OF E[mpc])
     % ---------------------------------------------------------------------
     decomp = statistics.Decomp(p, results.stats, results.stats);
-    doDecomposition = (p.nb==1) && (~p.EpsteinZin) && (p.MPCs)...
+    doDecomposition = (p.nz==1) && (~p.EpsteinZin) && (p.MPCs)...
         && (p.bequest_weight==0) && isequal(p.temptation,0) && (numel(p.r)==1)...
         && (p.DeterministicMPCs);
 
@@ -246,7 +241,7 @@ function results = main(p, varargin)
     %            };
            
     %     for ii = 1:numel(mpcs)
-    %         mpcs{ii} = reshape(mpcs{ii}, [p.nx_DST p.nyP p.nyF p.nb]);
+    %         mpcs{ii} = reshape(mpcs{ii}, [p.nx_DST p.nyP p.nyF p.nz]);
     %     end
 
     %     mpc_plotter = statistics.MPCPlotter(p, grdDST.a.matrix, mpcs);
@@ -284,9 +279,9 @@ function results = main(p, varargin)
     results.stats = aux.to_structure(results.stats);
     p.set('calibrator', [], false);
     Sparams = aux.to_structure(p);
-    converged = iterating;
+    converged = p.calibrating;
 
-    if ~iterating
+    if ~p.calibrating
         save(p.savematpath, 'Sparams', 'results', 'converged')
     end
 end

@@ -26,7 +26,7 @@ classdef DHACalibrator < solver.Calibrator
 
 			obj = obj@solver.Calibrator(params, variables, target_names, target_values);
 			
-			obj.main_handle = @(curr_params) main(curr_params, 'iterating', true);
+			obj.main_handle = @(curr_params) main(curr_params);
 		end
 
 		function construct_options_struct(obj, params)

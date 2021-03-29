@@ -231,8 +231,8 @@ classdef Income < handle
 
             % net y values on HJB grid
             obj.netymat_broadcast = reshape(obj.netymat,[1 obj.p.nyP obj.p.nyF 1 obj.p.nyT]);
-            obj.netymatEGP = repmat(obj.netymat_broadcast,[obj.p.nx 1 1 obj.p.nb 1]);
-            obj.netymatDST = repmat(obj.netymat_broadcast,[obj.p.nx_DST 1 1 obj.p.nb 1]);
+            obj.netymatEGP = repmat(obj.netymat_broadcast,[obj.p.nx 1 1 obj.p.nz 1]);
+            obj.netymatDST = repmat(obj.netymat_broadcast,[obj.p.nx_DST 1 1 obj.p.nz 1]);
 
             % full transition matrix with beta and IES transitions, excluding and including death
             if obj.p.ResetIncomeUponDeath
