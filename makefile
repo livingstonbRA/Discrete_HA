@@ -1,6 +1,8 @@
 
 .PHONY : batch combine download tables clean 
 
+.SUFFIXES: .pdf
+
 # --- GENERAL COMMANDS ---
 
 clean :
@@ -31,8 +33,16 @@ download :
 # Construct latex tables and compile pdf from downloaded results
 # (this code assumes that all of the downloaded table spreadsheets
 # have been moved/copied to the 'output/tables' directory)
-tables :
-	python code/+tables/create_tex_tables.py "output/tables"
-	cp code/+tables/tables.tex output/tables/tables.tex
-	cd output/tables && pdflatex tables
-	cd output/tables && pdflatex tables
+# tables :
+# 	python code/+tables/create_tex_tables.py "output/tables"
+# 	cp code/+tables/tables.tex output/tables/tables.tex
+# 	cd output/tables && pdflatex tables
+# 	cd output/tables && pdflatex tables
+
+tables : tables1.pdf tables2.pdf tables3.pdf
+
+%.pdf :
+	python code/+tables/create_tex_tables.py "output/tables/$*"
+	cp code/+tables/tables.tex output/tables/$*/$*.tex
+	cd output/tables/$* && pdflatex $*
+	cd output/tables/$* && pdflatex $*

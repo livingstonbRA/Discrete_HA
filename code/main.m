@@ -8,8 +8,7 @@ function results = main(p, varargin)
     % compute policy functions via the method of endogenous grip points, 
     % and to find the implied stationary distribution over the state space.
 
-    results = struct('norisk',[],'sim',[],'decomp_meanmpc',[]);
-    distr = struct();
+    results = struct('norisk',[],'sim',[]);
 
     parser = inputParser;
     addOptional(parser, 'iterating', false);
