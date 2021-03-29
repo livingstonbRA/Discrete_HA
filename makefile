@@ -15,18 +15,18 @@ batch :
 # Create raw tables from experiment results
 # (run this after all experiments have run to completion)
 combine :
-	mkdir -p output/tables
+	# mkdir -p output/tables
 	sbatch "code/batch/combine_runs.sbatch"
 
 # --- LOCAL COMMANDS ---
 
 # Download results from server -- make sure to change spath as needed!
 # (run this after running 'make combine' on the server)
-spath := "$$MW:/home/livingstonb/GitHub/Discrete_HA/output/tables/*"
+spath := "$$MW:/home/livingstonb/GitHub/Discrete_HA/output/tables*"
 cdate := $(shell date +"%m-%d-%Y-%T")
 download :
 	-mkdir -p output/server-$(cdate)
-	-scp $(spath) output/server-$(cdate)
+	-scp -r $(spath) output/server-$(cdate)/
 
 # Construct latex tables and compile pdf from downloaded results
 # (this code assumes that all of the downloaded table spreadsheets

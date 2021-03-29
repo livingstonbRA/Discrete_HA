@@ -9,7 +9,7 @@ close all;
 % SET OPTIONS
 % -------------------------------------------------------------------------
 % options
-runopts.calibrate = false; % wrap code in nonlinear solver
+runopts.calibrate = true; % wrap code in nonlinear solver
 runopts.fast = false; % very small asset and income grids for testing
 runopts.Simulate = false; % also solve distribution via simulation
 runopts.MakePlots = false; % not used
@@ -24,7 +24,7 @@ runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
 runopts.name_to_run = '';
-runopts.number = [2];
+runopts.number = [1];
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE

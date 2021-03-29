@@ -15,7 +15,11 @@ end
 taskid = str2num(getenv('SLURM_ARRAY_TASK_ID'));
 running_on_server = ~isempty(taskid);
 
-outdir = fullfile('output', 'tables');
+if ~running_on_server
+    taskid = 1;
+end
+
+outdir = fullfile('output', sprintf('tables%d', taskid));
 if ~exist(outdir, 'dir')
     mkdir(outdir);
 end
@@ -66,7 +70,8 @@ for ip = 1:ind
     decomps_baseline(ip) = cdecomp.results;
 end
 
-ctimepath = fullfile('input', 'continuous_time_baseline.mat');
+ctimename = sprintf('continuous_time_baseline%d.mat', taskid);
+ctimepath = fullfile('input', ctimename);
 ctimeresults = tables.read_continuous_time_results(ctimepath);
 
 tables.TexTables.save_baselines_tables(params, results, outdir, 'ctimeresults', ctimeresults);
