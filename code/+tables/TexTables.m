@@ -9,6 +9,8 @@ classdef TexTables
             {'Q2'}
             {'Q3'}
             {'Q4'}
+            {'Q5'}
+            {'Q6'}
             {'Q7'}
             {'Q8'}
         };
@@ -155,7 +157,7 @@ classdef TexTables
 
             for ii = 1:numel(indices)
                 ip = indices(ii);
-                if (tableno == 8) || (tableno == 9)
+                if (tableno == 10) || (tableno == 11)
                     if ~isempty(params_in(ip).tex_header_values)
                         tex_vals = params_in(ip).tex_header_values{1};
                         variable_values = {
@@ -164,6 +166,28 @@ classdef TexTables
                     else
                         variable_values = {
                             sfill(nan, 'Description')
+                        };
+                    end
+                elseif (tableno == 9)
+                    if ~isempty(params_in(ip).tex_header_values)
+                        tex_vals = params_in(ip).tex_header_values{1};
+                        variable_values = {
+                            sfill(tex_vals.r, 'r')
+                        };
+                    else
+                        variable_values = {
+                            sfill(nan, 'r', 3)
+                        };
+                    end
+                elseif (tableno == 8)
+                    if ~isempty(params_in(ip).tex_header_values)
+                        tex_vals = params_in(ip).tex_header_values{1};
+                        variable_values = {
+                            sfill(tex_vals.tempt, 'Temptation')
+                        };
+                    else
+                        variable_values = {
+                            sfill(nan, 'Temptation', 3)
                         };
                     end
                 elseif (tableno == 6) || (tableno == 7)

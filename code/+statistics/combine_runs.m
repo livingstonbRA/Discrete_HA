@@ -76,6 +76,6 @@ ctimeresults = tables.read_continuous_time_results(ctimepath);
 
 tables.TexTables.save_baselines_tables(params, results, outdir, 'ctimeresults', ctimeresults);
 
-for ip = 3:9
+for ip = 3:11
 	tables.TexTables.save_experiment_table(params, results, decomps_baseline, outdir, ip);
 end

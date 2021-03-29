@@ -138,6 +138,9 @@ function [params, all_names] = parameters(runopts)
             params(end).betaH0 = -3e-3;
             params(end).beta0 = 0.8;
         end
+
+        params(end).tex_header = 'r';
+        params(end).tex_header_values = struct('r', sprintf('%g', ii/100));
     end
     
     % interest rate heterogeneity
@@ -148,6 +151,8 @@ function [params, all_names] = parameters(runopts)
     params(end).beta0 = 0.973149481985717;
     params(end).group = {'Q6'};
     params(end).descr = 'r in {0, 2, 4}';
+    params(end).tex_header = 'r';
+    params(end).tex_header_values = struct('r', '0, 0.02, 0.04');
     
     name = 'Permanent r het, r in {-2,2,6} p.a.';
     params(end+1) = setup.Params(ifreq,name, quarterly_b_params);
@@ -156,6 +161,8 @@ function [params, all_names] = parameters(runopts)
     params(end).beta0 = 0.960885729527277;
     params(end).group = {'Q6'};
     params(end).descr = 'r in {-2,2,6}';
+    params(end).tex_header = 'r';
+    params(end).tex_header_values = struct('r', '-0.02, 0.02, 0.06');
 
 
 %         % different tax rates
@@ -332,6 +339,8 @@ function [params, all_names] = parameters(runopts)
             params(end).betaH0 = -2e-5;
         end
         params(end).group = {'Q5'};
+        params(end).tex_header = 'Temptation';
+        params(end).tex_header_values = struct('tempt', sprintf('%g', tempt));
     end
 
     name = 'Temptation, uniform in {0, 0.05, 0.1}';
@@ -341,6 +350,8 @@ function [params, all_names] = parameters(runopts)
     params(end).betaH0 = -4e-5;
     params(end).group = {'Q5'};
     params(end).descr = 'Temptation in {0, 0.05, 0.1}';
+    params(end).tex_header = 'Temptation';
+    params(end).tex_header_values = struct('tempt', '0, 0.05, 0.1');
 
     %----------------------------------------------------------------------
     % PART 3a, ANNUAL MODEL
