@@ -140,7 +140,7 @@ classdef Calibrator < handle
 		end
 
 		function solver_args = get_args(obj)
-			x0 = obj.get_next_x0();
+			x0 = obj.x0{1};
 			if ~isempty(obj.ubounds) && ~isempty(x0)
 				solver_args = {x0, obj.lbounds, obj.ubounds};
 			elseif ~isempty(x0)
