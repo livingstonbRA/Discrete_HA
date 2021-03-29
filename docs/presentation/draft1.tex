@@ -1,0 +1,35 @@
+\documentclass{article}
+
+\title{Discrete HA repository}
+
+\begin{document}
+
+\maketitle
+
+\section{Notes}
+	\begin{enumerate}
+		\item If we go into the code directory, you'll see a bunch of folders that start with the plus sign. MATLAB sees each of these folders as packages which just means that to call any code in those directories you have to type the name of the package followed by a period and then followed by whatever function or script is in the package. It'll be clear how this works when you start looking at the code more closely, but I just like doing this because whenever I look at some of my code that calls some other code, I can immediately see where to find the code that's being called.
+	\end{enumerate}
+
+\section{master script}
+	This is the script that I actually run. 
+	\subsection{runopts}
+		This structure called runopts contains some options.
+		\begin{enumerate}
+			\item The calibrate option is a flag that I set to true when I want to pass the model to a nonlinear solver to match whatever median wealth target Greg wants. For now, you should set that to false and ignore all of the calibration code.
+			\item The other options in this first block can be left as-is and will become self-explanatory later on.
+			\item The mode option is set to the name of the script in which I've set up all the different experiments we want to run. I only have one parameters script right now so it just points to that but I've used this option in the past to switch between different sets of experiments I used to have in the repository.
+			\item The parameters script sets up a lot of different experiments so when I want to run just one of them locally I'll either use the name I've assigned to a given experiment or the number, right now it will run the first experiment.
+		\end{enumerate}
+	\subsection{load parameters}
+		This line just calls the parameters script and returns the parameters--I'll explain what that means in just a bit.
+	\subsection{final run}
+		This line calls the main.m script and passes it the parameter values associated with the experiment that was selected.
+	\subsection{tables}
+		Then here, I take the output from the main script and pass it to some code which generates a table with some statistics about the stationary equilibrium.
+		
+\section{parameters}
+		
+\section{classes}
+
+\end{document}

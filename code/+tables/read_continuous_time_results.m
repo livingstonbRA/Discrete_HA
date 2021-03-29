@@ -13,9 +13,9 @@ function results = read_continuous_time_results(filepath)
     end
     
     stats.beta_A = struct('value', stats_orig.beta_A.value);
-    stats.mean_gross_y_annual = struct('value', 1);
-    stats.std_log_gross_y_annual = struct('value', 0.71);
-    stats.std_log_net_y_annual = struct('value', 0.71);
+    stats.mean_gross_y_annual = struct('value', stats_orig.mean_gross_y_annual.value);
+    stats.std_log_gross_y_annual = struct('value', stats_orig.std_log_gross_y_annual.value);
+    stats.std_log_net_y_annual = struct('value', stats_orig.std_log_net_y_annual.value);
     stats.mean_a = struct('value', stats_orig.totw.value);
     stats.sav0 = struct('value', stats_orig.sav0.value);
     stats.constrained = {struct('value', stats_orig.constrained{1}.value)};

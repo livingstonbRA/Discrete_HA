@@ -23,8 +23,8 @@ runopts.SaveOutput = true;
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
-runopts.name_to_run = '';
-runopts.number = [1];
+runopts.name_to_run = ''; % ''
+runopts.number = 1; % []
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE
@@ -58,7 +58,7 @@ addpath(fullfile('code', 'aux_lib'));
 %% ------------------------------------------------------------------------
 % LOAD PARAMETERS
 % -------------------------------------------------------------------------
-[params, all_names] = setup.(runopts.mode)(runopts);
+params = setup.(runopts.mode)(runopts);
 
 %% ------------------------------------------------------------------------
 % CALL MAIN FUNCTION
