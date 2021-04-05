@@ -38,7 +38,7 @@ classdef Params < handle
 
         % Computation
         max_iter = 1e5; % EGP
-        tol_iter = 1.0e-6; % EGP
+        tol_iter = 1.0e-7; % EGP
         Nsim = 1e5; % for optional simulation
         Tsim = 400; % for optional simulation
         Nmpcsim = 2e5; % for optional MPC simulation

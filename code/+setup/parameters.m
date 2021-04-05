@@ -5,6 +5,9 @@ function [params, all_names] = parameters(runopts)
     import solver.DHACalibrator
     
     %% SET SHARED PARAMETERS
+    shared_params = struct();
+    shared_params.r = 0.01;
+    shared_params.Bequests = false;
 
     % Statistics from the 2019 SCF
     scf = setup.scf2019struct();
@@ -37,8 +40,10 @@ function [params, all_names] = parameters(runopts)
     % Ignored if not calibrating
     calibrations = struct();
     calibrations.variables = {'beta0'};
-    calibrations.target_names = {'median_a'};
-    calibrations.target_values = [scf.median_totw];
+    % calibrations.target_names = {'median_a'};
+    % calibrations.target_values = [scf.median_totw];
+    calibrations.target_names = {'mean_a'};
+    calibrations.target_values = [4.1];
 
     for ii = 2:999
         calibrations(ii) = calibrations(1);
@@ -111,12 +116,19 @@ function [params, all_names] = parameters(runopts)
     params(end).beta0 = 0.975363510593659;
     params(end).tex_header = 'No Death';
 
-    % no bequests
-    name = 'No Bequests';
+    % % no bequests
+    % name = 'No Bequests';
+    % params(end+1) = setup.Params(4, name, quarterly_b_params);
+    % params(end).group = {'Q1b'};
+    % params(end).Bequests = 0;
+    % params(end).tex_header = 'No Bequests';
+
+    % With bequests
+    name = 'With Bequests';
     params(end+1) = setup.Params(4, name, quarterly_b_params);
     params(end).group = {'Q1b'};
-    params(end).Bequests = 0;
-    params(end).tex_header = 'No Bequests';
+    params(end).Bequests = true;
+    params(end).tex_header = 'With Bequests';
 
     % perfect annuities
     name = 'Annuities';
