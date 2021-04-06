@@ -236,7 +236,7 @@ classdef MPCFinder < handle
                 mpcsvec = mpcs(:);
 
            		% Conditional on HtM (own biweekly inc)
-           		qinc = income.netymat_broadcast  * (obj.p.freq / 4);
+           		qinc = obj.income.netymat_broadcast  * (obj.p.freq / 4);
            		htm_biweekly =  (obj.grids.a.vec / qinc) <= (1 / 6);
            		dist_htm_biweekly = dist_vec(htm_biweekly(:));
            		dist_htm_biweekly = dist_htm_biweekly / sum(dist_htm_biweekly);
