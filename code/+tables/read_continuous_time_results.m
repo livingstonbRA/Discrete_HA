@@ -9,7 +9,8 @@ function results = read_continuous_time_results(filepath)
         quarterly = struct('value', stats_orig.mpcs(ishock).quarterly.value);
         annual = struct('value', stats_orig.mpcs(ishock).annual.value);
         oneperiod = struct('value', stats_orig.mpcs(ishock).quarterly.value);
-        stats.mpcs(ishock) = struct('quarterly', quarterly, 'annual', annual, 'oneperiod', oneperiod);
+        stats.mpcs(ishock) = struct('quarterly', quarterly, 'annual', annual,...
+            'oneperiod', oneperiod, 'quarterly_htm_a_lt_1000', struct('value', NaN));
     end
     
     stats.beta_A = struct('value', stats_orig.beta_A.value);

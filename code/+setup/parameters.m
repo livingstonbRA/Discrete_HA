@@ -91,6 +91,7 @@ function [params, all_names] = parameters(runopts)
     params(end).descr = {'Calibration to total wealth, E[a] = 9.4'};
     params(end).tex_header = 'E[a]';
     params(end).tex_header_values = {struct('value', 9.4)};
+    params(end).betaH0 = 2e-3;
     n = numel(params);
     calibrations(n).target_names = {'mean_a'};
     calibrations(n).target_values = [9.4];
@@ -169,7 +170,7 @@ function [params, all_names] = parameters(runopts)
     name = 'Permanent r het, r in {-2,2,6} p.a.';
     params(end+1) = setup.Params(ifreq,name, quarterly_b_params);
     params(end).r = [-2, 2, 6] / 100;
-    params(end).betaH0 = 1e-5;
+    params(end).betaH0 = 1e-3;
     params(end).beta0 = 0.960885729527277;
     params(end).group = {'Q6'};
     params(end).descr = 'r in {-2,2,6}';
@@ -208,9 +209,9 @@ function [params, all_names] = parameters(runopts)
         params(end).tex_header_values = {struct('pswitch', 0, 'width', ibw)};
         
         if ibw == 0.005
-            params(end).betaH0 = -1e-4;
+            params(end).betaH0 = 7e-4;
         elseif ibw == 0.01
-            params(end).betaH0 = -1e-3;
+            params(end).betaH0 = 1e-3;
         end
     end
 
@@ -293,10 +294,14 @@ function [params, all_names] = parameters(runopts)
         params(end).tex_header = 'EZ';
         params(end).tex_header_values = {struct('riskaver', ra_i, 'ies', ies_i)};
 
-        if i <= 3
+        if i == 1
+            params(end).betaH0 = - 2e-3;
+        elseif i <= 3
             params(end).betaH0 = - 3e-3;
-        else
+        elseif i == 4
             params(end).betaH0 = - 1e-3;
+        else
+            params(end).betaH0 = 3e-3;
         end
     end
 
@@ -346,7 +351,7 @@ function [params, all_names] = parameters(runopts)
         params(end).temptation = tempt;
         if tempt == 0.07
             params(end).beta0 = 1;
-            params(end).betaH0 = 4e-4;
+            params(end).betaH0 = 2e-3;
         elseif  tempt == 0.05
             params(end).betaH0 = -2e-5;
         end
