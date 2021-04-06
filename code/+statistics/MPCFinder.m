@@ -79,11 +79,11 @@ classdef MPCFinder < handle
 
                 obj.mpcs(ishock).quarterly_htm_biweekly = sfill(NaN,...
 					sprintf('Quarterly HtM1 MPC (%%), out of %s', shock_label), 1,...
-		    		sprintf('Quarterly MPC\textsuperscript{$\dagger$} (\\%%), out of %s', shock_label_tex));
+		    		sprintf('Quarterly MPC\textsuperscript{$\\dagger$} (\\%%), out of %s', shock_label_tex));
 
                 obj.mpcs(ishock).quarterly_htm_a_lt_1000 = sfill(NaN,...
 					sprintf('Quarterly HtM1 MPC (%%), out of %s', shock_label), 1,...
-		    		sprintf('Quarterly MPC\textsuperscript{$\ddagger$} (\\%%), out of %s', shock_label_tex));
+		    		sprintf('Quarterly MPC\textsuperscript{$\\ddagger$} (\\%%), out of %s', shock_label_tex));
 
 		    	obj.mpcs(ishock).avg_s_t = NaN(5,5);
 		    	% mpcs over states for shock in period 1
