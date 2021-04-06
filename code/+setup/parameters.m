@@ -146,10 +146,10 @@ function [params, all_names] = parameters(runopts)
         params(end).group = {'Q6'};
         params(end).descr = name;
         
-        if ii ~= 0
-            params(end).betaH0 = -3e-3;
-            params(end).beta0 = 0.8;
-        end
+        % if ii == 0
+        %     params(end).betaH0 = -1e-3;
+        %     params(end).beta0 = 0.8;
+        % end
 
         params(end).tex_header = 'r';
         params(end).tex_header_values = {struct('r', sprintf('%g', ii/100))};

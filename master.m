@@ -24,7 +24,7 @@ runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
 runopts.name_to_run = ''; % ''
-runopts.number = [1]; % []
+runopts.number = [12]; % []
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE
