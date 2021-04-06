@@ -236,17 +236,29 @@ classdef MPCFinder < handle
                 mpcsvec = mpcs(:);
 
            		% Conditional on HtM (own biweekly inc)
-           		qinc = obj.income.netymat_broadcast  * (obj.p.freq / 4);
-           		htm_biweekly =  (obj.grids.a.vec / qinc) <= (1 / 6);
-           		dist_htm_biweekly = dist_vec(htm_biweekly(:));
-           		dist_htm_biweekly = dist_htm_biweekly / sum(dist_htm_biweekly);
-           		mpc_htm_biweekly = dot(dist_htm_biweekly, mpcsvec(htm_biweekly));
+       %     		qinc = obj.income.netymat_broadcast  * (obj.p.freq / 4);
+       %     		htm_biweekly =  (obj.grids.a.vec ./ qinc) <= (1 / 6);
+           		
+       %     		[n1, n2, n3, n4] = size(obj.basemodel.pmf);
+       %     		dims1 = [n1, n2, n3, n4];
+			    % [n1, n2, n3, n4] = size(htm_biweekly);
+			    % dims0 = [n1, n2, n3, n4];
+			    % dims1(dims1 == dims0) = 1;
+			    % htm_biweekly = repmat(htm_biweekly, dims1);
+
+			    % dist_htm_biweekly = kron(obj.income.yTdist, dist_vec);
+       %     		dist_htm_biweekly = dist_htm_biweekly(htm_biweekly(:));
+       %     		dist_htm_biweekly = dist_htm_biweekly / sum(dist_htm_biweekly);
+       %     		mpc_htm_biweekly = dot(dist_htm_biweekly, mpcsvec(htm_biweekly(:)));
 
            		% Conditional on HtM (a <= $1000)
            		htm_a_lt_1000 =  obj.grids.a.vec <= 1000 / obj.p.numeraire_in_dollars;
-           		dist_htm_a_lt_1000 = dist_vec(htm_biweekly(:));
+           		dims1 = size(obj.basemodel.pmf);
+           		dims1(1) = 1;
+           		htm_a_lt_1000 = repmat(htm_a_lt_1000, dims1);
+           		dist_htm_a_lt_1000 = dist_vec(htm_a_lt_1000(:));
            		dist_htm_a_lt_1000 = dist_htm_a_lt_1000 / sum(dist_htm_a_lt_1000);
-           		mpc_htm_a_lt_1000 = dot(dist_htm_a_lt_1000, mpcsvec(htm_a_lt_1000));
+           		mpc_htm_a_lt_1000 = dot(dist_htm_a_lt_1000, mpcsvec(htm_a_lt_1000(:)));
 
            		% Assign values
 	            if immediate_shock > 0
@@ -266,8 +278,8 @@ classdef MPCFinder < handle
                     obj.mpcs(ishock).median(shockperiod,it) = mpc_median;
 
                     if (it == 1) && (obj.p.freq == 4)
-	                    obj.mpcs(ishock).quarterly_htm_biweekly.value = mpc_htm_biweekly;
-	                    obj.mpcs(ishock).quarterly_htm_a_lt_1000.value = mpc_htm_a_lt_1000;
+	                    % obj.mpcs(ishock).quarterly_htm_biweekly.value = mpc_htm_biweekly;
+	                    obj.mpcs(ishock).quarterly_htm_a_lt_1000.value = 100 * mpc_htm_a_lt_1000;
 	                end
 	            elseif shockperiod == 9
 	            	obj.loss_in_2_years.avg = obj.basemodel.pmf(:)' * mpcs(:);
