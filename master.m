@@ -23,8 +23,8 @@ runopts.SaveOutput = true;
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
-runopts.name_to_run = ''; % ''
-runopts.number = [1]; % []
+runopts.name_to_run = sprintf('EZ, ra%g, ies%g', 8, 2); % ''
+runopts.number = []; % []
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE

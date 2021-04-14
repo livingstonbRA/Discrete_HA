@@ -96,7 +96,7 @@ classdef EGP_EZ_Solver < handle
 				obj.iterate_once(income);
 
 				obj.EGP_cdiff = max(abs(obj.conupdate(:)-obj.con(:)));
-		        if mod(iter,50) ==0
+		        if mod(iter,100) ==0
 		            disp([' EGP Iteration ' int2str(iter)...
 		            		' max con fn diff is ' num2str(obj.EGP_cdiff)]);
 		        end

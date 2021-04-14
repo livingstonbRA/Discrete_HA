@@ -104,7 +104,7 @@ function model = solve_EGP(p, grids, heterogeneity,...
         conupdate = xmat - sav - sav_tax;
 
         cdiff = max(abs(conupdate(:)-conlast(:)));
-        if (mod(iter, 50) == 0) && ~p.calibrating
+        if (mod(iter, 100) == 0) && ~p.calibrating
             disp(['  EGP Iteration ' int2str(iter), ' max con fn diff is ' num2str(cdiff)]);
         end
     end

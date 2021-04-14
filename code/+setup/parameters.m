@@ -13,6 +13,8 @@ function [params, all_names] = parameters(runopts)
     scf = setup.scf2019struct();
     shared_params.numeraire_in_dollars = scf.annual_earnings;
 
+    mean_totw_target = scf.mean_totw / scf.annual_earnings;
+
     % Income processes
     quarterly_b_params = shared_params;
     quarterly_b_params.IncomeProcess = 'input/income_quarterly_b_contyT.mat';
@@ -43,7 +45,7 @@ function [params, all_names] = parameters(runopts)
     % calibrations.target_names = {'median_a'};
     % calibrations.target_values = [scf.median_totw];
     calibrations.target_names = {'mean_a'};
-    calibrations.target_values = [4.1];
+    calibrations.target_values = [mean_totw_target];
 
     for ii = 2:999
         calibrations(ii) = calibrations(1);
@@ -279,8 +281,8 @@ function [params, all_names] = parameters(runopts)
     params(end).tex_header_values = {struct('riskaver', 'exp(2), ..., exp(-2)', 'ies', 'exp(-21), ..., exp(2)')};
 
     % epstein-zin, quarterly
-    ras = [0.5 8  1    1 8];
-    ies = [1   1  0.25 2 2];
+    ras = [0.5 8  1    1]; % 8
+    ies = [1   1  0.25 2]; % 2
     for i = 1:5
         ra_i = ras(i);
         ies_i = ies(i);
@@ -294,14 +296,18 @@ function [params, all_names] = parameters(runopts)
         params(end).tex_header = 'EZ';
         params(end).tex_header_values = {struct('riskaver', ra_i, 'ies', ies_i)};
 
-        if i == 1
-            params(end).betaH0 = - 2e-3;
-        elseif i <= 3
-            params(end).betaH0 = - 3e-3;
-        elseif i == 4
-            params(end).betaH0 = - 1e-3;
-        else
-            params(end).betaH0 = 3e-3;
+        switch i
+            case 1
+                params(end).betaH0 = - 2e-3;
+            case 2
+                params(end).betaH0 = - 3e-3;
+            case 3
+                params(end).betaH0 = - 3e-3;
+            case 4
+                params(end).betaH0 = - 1e-3;
+            case 5
+                params(end).betaH0 = 3e-2;
+                params(end).beta0 = 0.999868 ^ 4;
         end
     end
 
