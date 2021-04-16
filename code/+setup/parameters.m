@@ -283,7 +283,7 @@ function [params, all_names] = parameters(runopts)
     % epstein-zin, quarterly
     ras = [0.5 8  1    1]; % 8
     ies = [1   1  0.25 2]; % 2
-    for i = 1:5
+    for i = 1:4
         ra_i = ras(i);
         ies_i = ies(i);
         name = sprintf('EZ, ra%g, ies%g', ra_i, ies_i);
