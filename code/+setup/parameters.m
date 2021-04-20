@@ -81,7 +81,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q1a'};
     params(end).descr = 'Calibration to liquid wealth, E[a] = 2.25';
     params(end).tex_header = 'E[a]';
-    params(end).tex_header_values = {struct('value', 2.25)};
+    params(end).tex_header_values.value = 2.25;
     n = numel(params);
     calibrations(n).target_names = {'mean_a'};
     calibrations(n).target_values = [2.25];
@@ -92,7 +92,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q1a'};
     params(end).descr = {'Calibration to total wealth, E[a] = 9.4'};
     params(end).tex_header = 'E[a]';
-    params(end).tex_header_values = {struct('value', 9.4)};
+    params(end).tex_header_values.value = 9.4;
     params(end).betaH0 = 2e-3;
     n = numel(params);
     calibrations(n).target_names = {'mean_a'};
@@ -105,7 +105,7 @@ function [params, all_names] = parameters(runopts)
         params(end).group = {'Q1a'};
         params(end).descr = {sprintf('Calibration to liquid wealth, median(a) = %g', mw)};
         params(end).tex_header = 'Median(a)';
-        params(end).tex_header_values = {struct('value', mw)};
+        params(end).tex_header_values.value = mw;
         n = numel(params);
         calibrations(n).target_names = {'median_a'};
         calibrations(n).target_values = [mw];
@@ -115,10 +115,10 @@ function [params, all_names] = parameters(runopts)
     for mw = [0.046, 1.54]
         name = sprintf('median(a) = %g', mw);
         params(end+1) = setup.Params(4, name, quarterly_b_params);
-        params(end).group = {'Q1c'};
+        params(end).group = {'Q1b'};
         params(end).descr = {sprintf('Calibration to liquid wealth, median(a) = %g', mw)};
         params(end).tex_header = 'Median(a)';
-        params(end).tex_header_values = {struct('value', mw)};
+        params(end).tex_header_values.value = mw;
         n = numel(params);
         calibrations(n).target_names = {'median_a'};
         calibrations(n).target_values = [mw];
@@ -126,10 +126,10 @@ function [params, all_names] = parameters(runopts)
 
     name = sprintf('E[a] = %g', 0.5617);
     params(end+1) = setup.Params(4, name, quarterly_b_params);
-    params(end).group = {'Q1c'};
+    params(end).group = {'Q1b'};
     params(end).descr = {'Calibration to total wealth, E[a] = 0.5617'};
     params(end).tex_header = 'E[a]';
-    params(end).tex_header_values = {struct('value', 0.5617)};
+    params(end).tex_header_values.value = 0.5617;
     params(end).betaH0 = 2e-3;
     n = numel(params);
     calibrations(n).target_names = {'mean_a'};
@@ -137,20 +137,31 @@ function [params, all_names] = parameters(runopts)
 
     name = sprintf('HtM = %g', 0.142);
     params(end+1) = setup.Params(4, name, quarterly_b_params);
-    params(end).group = {'Q1c'};
+    params(end).group = {'Q1b'};
     params(end).descr = {'Calibration to PHtM, HtM = 0.142'};
     params(end).tex_header = 'HtM';
-    params(end).tex_header_values = {struct('value', 0.142)};
+    params(end).tex_header_values.value = 0.142;
     params(end).betaH0 = 2e-3;
     n = numel(params);
     calibrations(n).target_names = {'a_lt_ysixth'};
     calibrations(n).target_values = [0.142];
 
+    name = sprintf('HtM = %g', 0.409);
+    params(end+1) = setup.Params(4, name, quarterly_b_params);
+    params(end).group = {'Q1b'};
+    params(end).descr = {'Calibration to PHtM, HtM = 0.409'};
+    params(end).tex_header = 'HtM';
+    params(end).tex_header_values.value = 0.409;
+    params(end).betaH0 = 2e-3;
+    n = numel(params);
+    calibrations(n).target_names = {'a_lt_ysixth'};
+    calibrations(n).target_values = [0.409];
+
 
     % no death
     name = 'No Death';
     params(end+1) = setup.Params(4, name, quarterly_b_params);
-    params(end).group = {'Q1b'};
+    params(end).group = {'Q1c'};
     params(end).dieprob = 0;
     params(end).beta0 = 0.975363510593659;
     params(end).tex_header = 'No Death';
@@ -165,14 +176,14 @@ function [params, all_names] = parameters(runopts)
     % With bequests
     name = 'With Bequests';
     params(end+1) = setup.Params(4, name, quarterly_b_params);
-    params(end).group = {'Q1b'};
+    params(end).group = {'Q1c'};
     params(end).Bequests = true;
     params(end).tex_header = 'With Bequests';
 
     % perfect annuities
     name = 'Annuities';
     params(end+1) = setup.Params(ifreq, name, quarterly_b_params);
-    params(end).group = {'Q1b'};
+    params(end).group = {'Q1c'};
     params(end).annuities = true;
     params(end).betaH0 = - 5e-3;
     params(end).tex_header = 'Annuities';
@@ -191,7 +202,7 @@ function [params, all_names] = parameters(runopts)
         % end
 
         params(end).tex_header = 'r';
-        params(end).tex_header_values = {struct('r', sprintf('%g', ii/100))};
+        params(end).tex_header_values.r = sprintf('%g', ii/100);
     end
     
     % interest rate heterogeneity
@@ -203,7 +214,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q6'};
     params(end).descr = 'r in {0, 2, 4}';
     params(end).tex_header = 'r';
-    params(end).tex_header_values = {struct('r', '0, 0.02, 0.04')};
+    params(end).tex_header_values.r = '0, 0.02, 0.04';
     
     name = 'Permanent r het, r in {-2,2,6} p.a.';
     params(end+1) = setup.Params(ifreq,name, quarterly_b_params);
@@ -213,7 +224,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q6'};
     params(end).descr = 'r in {-2,2,6}';
     params(end).tex_header = 'r';
-    params(end).tex_header_values = {struct('r', '-0.02, 0.02, 0.06')};
+    params(end).tex_header_values.r = '-0.02, 0.02, 0.06';
 
 
 %         % different tax rates
@@ -244,7 +255,8 @@ function [params, all_names] = parameters(runopts)
         params(end).group = {'Q2'};
         params(end).descr = sprintf('p = %g, spacing = %g', 0, ibw);
         params(end).tex_header = '$\beta$ het.';
-        params(end).tex_header_values = {struct('pswitch', 0, 'width', ibw)};
+        params(end).tex_header_values.pswitch = 0;
+        params(end).tex_header_values.spacing = ibw;
         
         if ibw == 0.005
             params(end).betaH0 = 7e-4;
@@ -264,7 +276,8 @@ function [params, all_names] = parameters(runopts)
             params(end).group = {'Q2'};
             params(end).descr = sprintf('p = %g, spacing = %g', bs, ibw);
             params(end).tex_header = '$\beta$ het.';
-            params(end).tex_header_values = {struct('pswitch', bs, 'width', ibw)};
+            params(end).tex_header_values.pswitch = bs;
+            params(end).tex_header_values.spacing = ibw;
 
             if bs == 1 / 50
                 params(end).betaH0 = -1.2e-2;
@@ -289,7 +302,7 @@ function [params, all_names] = parameters(runopts)
         params(end).group = {'Q3'};
         params(end).descr = 'CRRA';
         params(end).tex_header = 'CRRA';
-        params(end).tex_header_values = {struct('riskaver', ira, 'ies', 1 / ira)};
+        params(end).tex_header_values.riskaver = ira;
     end
     
     % CRRA with IES heterogeneity
@@ -302,7 +315,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q3'};
     params(end).descr = 'RA = exp(1), ..., exp(-1), IES = exp(-1), ..., exp(1)';
     params(end).tex_header = 'CRRA';
-    params(end).tex_header_values = {struct('riskaver', 'exp(1), ..., exp(-1)', 'ies', 'exp(-1), ..., exp(1)')};
+    params(end).tex_header_values.riskaver = 'exp(-1), ..., exp(-1)';
     
     name = 'CRRA w/IES betw exp(-2), exp(2)';
     params(end+1) = setup.Params(ifreq, name, quarterly_b_params);
@@ -314,7 +327,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q3'};
     params(end).descr = 'RA = exp(2), ..., exp(-2), IES = exp(-2), ..., exp(2)';
     params(end).tex_header = 'CRRA';
-    params(end).tex_header_values = {struct('riskaver', 'exp(2), ..., exp(-2)', 'ies', 'exp(-21), ..., exp(2)')};
+    params(end).tex_header_values.riskaver = 'exp(-2), ..., exp(2)';
 
     % epstein-zin, quarterly
     ras = [0.5 8  1    1]; % 8
@@ -330,7 +343,8 @@ function [params, all_names] = parameters(runopts)
         params(end).group = {'Q4'};
         params(end).descr = sprintf('RA = %g, IES = %g', ra_i, ies_i);
         params(end).tex_header = 'EZ';
-        params(end).tex_header_values = {struct('riskaver', ra_i, 'ies', ies_i)};
+        params(end).tex_header_values.riskaver = ra_i;
+        params(end).tex_header_values.ies = ies_i;
 
         switch i
             case 1
@@ -358,7 +372,8 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q4'};
     params(end).descr = 'RA = 1, IES = exp(-1), ..., exp(1)';
     params(end).tex_header = 'EZ';
-    params(end).tex_header_values = {struct('riskaver', 1, 'ies', 'exp(-1), ..., exp(1)')};
+    params(end).tex_header_values.riskaver = 1;
+    params(end).tex_header_values.ies = 'exp(-1), ..., exp(1)';
     
     name = 'EZ w/ IES betw exp(-2), exp(2)';
     params(end+1) = setup.Params(ifreq, name, quarterly_b_params);
@@ -370,7 +385,8 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q4'};
     params(end).descr = 'RA = 1, IES = exp(-2), ..., exp(2)';
     params(end).tex_header = 'EZ';
-    params(end).tex_header_values = {struct('riskaver', 1, 'ies', 'exp(-2), ..., exp(2)')};
+    params(end).tex_header_values.riskaver = 1;
+    params(end).tex_header_values.ies = 'exp(-2), ..., exp(2)';
 
     % EZ with risk aversion heterogeneity
     name = 'EZ w/ RA betw exp(-2), exp(2)';
@@ -384,7 +400,8 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q4'};
     params(end).descr = 'RA = exp(-2), ..., exp(2), IES = 1';
     params(end).tex_header = 'EZ';
-    params(end).tex_header_values = {struct('riskaver', 'exp(-2), ..., exp(2)', 'ies', 1)};
+    params(end).tex_header_values.ies = 1;
+    params(end).tex_header_values.riskaver = 'exp(-2), ..., exp(2)';
 
     % temptation
     for tempt = [0.01 0.05 0.07]
@@ -399,7 +416,7 @@ function [params, all_names] = parameters(runopts)
         end
         params(end).group = {'Q5'};
         params(end).tex_header = 'Temptation';
-        params(end).tex_header_values = {struct('tempt', sprintf('%g', tempt))};
+        params(end).tex_header_values.tempt = sprintf('%g', tempt);
     end
 
     name = 'Temptation, uniform in {0, 0.05, 0.1}';
@@ -410,7 +427,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q5'};
     params(end).descr = 'Temptation in {0, 0.05, 0.1}';
     params(end).tex_header = 'Temptation';
-    params(end).tex_header_values = {struct('tempt', '0, 0.05, 0.1')};
+    params(end).tex_header_values.tempt = '0, 0.05, 0.1';
 
     %----------------------------------------------------------------------
     % PART 3a, ANNUAL MODEL
@@ -426,7 +443,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q7'};
     params(end).descr = 'No trans shocks';
     params(end).tex_header = 'Annual (i)';
-    params(end).tex_header_values = {struct('description', 'no trans shocks')};
+    params(end).tex_header_values.descr = 'no trans shocks';
 
     % iv
     name = 'Annual, Carrol';
@@ -437,7 +454,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q7'};
     params(end).descr = 'Carrol process';
     params(end).tex_header = 'Annual (iv)';
-    params(end).tex_header_values = {struct('description', 'Carrol process')};
+    params(end).tex_header_values.descr = 'Carrol process';
     
 %     % v
 %     params(end+1) = setup.Params(1,'A a(v) HighPersNotReEst','');
@@ -463,7 +480,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q7'};
     params(end).descr = 'High persistence';
     params(end).tex_header = 'Annual (viii)';
-    params(end).tex_header_values = {struct('description', 'High persistence')};
+    params(end).tex_header_values.descr = 'High persistence';
 %     
 %     % ix
 %     params(end+1) = Params(1,'A a(ix) HighPersNoTransReEst','');
@@ -484,7 +501,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q7'};
     params(end).descr = 'FE heterogeneity';
     params(end).tex_header = 'Annual (x)';
-    params(end).tex_header_values = {struct('description', 'FE heterogeneity')};
+    params(end).tex_header_values.descr = 'FE heterogeneity';
     
     %----------------------------------------------------------------------
     % PART 3b, QUARTERLY MODEL
@@ -497,7 +514,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q8'};
     params(end).descr = 'quart_a';
     params(end).tex_header = 'Quart (i)';
-    params(end).tex_header_values = {struct('description', 'quart$_a$')};
+    params(end).tex_header_values.descr = 'quart$_a$';
     
     % ii
     name = 'KMP';
@@ -508,7 +525,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q8'};
     params(end).descr = 'KMP';
     params(end).tex_header = 'Quart (ii)';
-    params(end).tex_header_values = {struct('description', 'KMP')};
+    params(end).tex_header_values.descr = 'KMP';
 
     % iii quarterly_c
     name = 'quarterly_c';
@@ -517,7 +534,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q8'};
     params(end).descr = 'quart_c';
     params(end).tex_header = 'Quart (iii)';
-    params(end).tex_header_values = {struct('description', 'quart$_c$')};
+    params(end).tex_header_values.descr = 'quart$_c$';
     
     % no transitory shocks
     name = 'no trans shocks';
@@ -527,7 +544,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q8'};
     params(end).descr = 'no_trans_shocks';
     params(end).tex_header = 'Quart No Trans';
-    params(end).tex_header_values = {struct('description', 'quart no trans')};
+    params(end).tex_header_values.descr = 'quart no trans';
         
     %----------------------------------------------------------------------
     % CALL METHODS/CHANGE SELECTED PARAMETERS, DO NOT CHANGE

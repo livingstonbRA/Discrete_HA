@@ -18,6 +18,52 @@ classdef TexTables
     end
 
     methods (Static)
+        function [n, labels, vars, decimals] = get_header_variables(table_group)
+            decimals = [];
+            switch table_group
+                case 'Q1a'
+                    labels = {'Value'};
+                    vars = {'value'};
+                case 'Q1b'
+                    labels = {'Value'};
+                    vars = {'value'};
+                case 'Q1c'
+                    labels = {};
+                    vars = {};
+                case 'Q2'
+                    labels = {'Switching Probability', 'Spacing'};
+                    vars = {'pswitch', 'spacing'};
+                    decimals = [2, 3];
+                case 'Q3'
+                    labels = {'Risk aversion'};
+                    vars = {'riskaver'};
+                    decimals = 2;
+                case 'Q4'
+                    labels = {'Risk aversion', 'IES'};
+                    vars = {'riskaver', 'ies'};
+                    decimals = [2, 3];
+                case 'Q5'
+                    labels = {'Temptation'};
+                    vars = {'tempt'};
+                    decimals = 3;
+                case 'Q6'
+                    labels = {'r'};
+                    vars = {'r'};
+                    decimals = 3;
+                case 'Q7'
+                    labels = {'Description'};
+                    vars = {'descr'};
+                case 'Q8'
+                    labels = {'Description'};
+                    vars = {'descr'};
+            end
+
+            n = numel(labels);
+            if isempty(decimals)
+                decimals = ones(1, n);
+            end
+        end
+
         function save_baselines_tables(params_in, results, dirpath, varargin)
             for tableno = [1, 2]
 	            for panelname = {'header', 'A', 'B', 'C', 'D'}
@@ -154,81 +200,23 @@ classdef TexTables
         end
 
         function table_out = experiment_table_header(params_in, results, tableno)
-            indices = filter_param_group(params_in, tables.TexTables.table_includes{tableno});
+            table_group = tables.TexTables.table_includes{tableno};
+            indices = filter_param_group(params_in, table_group);
 
             import statistics.Statistics.sfill
 
+            [nhvars, hlabels, hvars, hdecimals] = tables.TexTables.get_header_variables(table_group);
+
+
             for ii = 1:numel(indices)
                 ip = indices(ii);
-                if (tableno == 10) || (tableno == 11)
-                    if ~isempty(params_in(ip).tex_header_values)
-                        tex_vals = params_in(ip).tex_header_values{1};
-                        variable_values = {
-                            sfill(string(tex_vals.description), 'Description')
-                        };
-                    else
-                        variable_values = {
-                            sfill(nan, 'Description')
-                        };
-                    end
-                elseif (tableno == 9)
-                    if ~isempty(params_in(ip).tex_header_values)
-                        tex_vals = params_in(ip).tex_header_values{1};
-                        variable_values = {
-                            sfill(tex_vals.r, 'r')
-                        };
-                    else
-                        variable_values = {
-                            sfill(nan, 'r', 3)
-                        };
-                    end
-                elseif (tableno == 8)
-                    if ~isempty(params_in(ip).tex_header_values)
-                        tex_vals = params_in(ip).tex_header_values{1};
-                        variable_values = {
-                            sfill(tex_vals.tempt, 'Temptation')
-                        };
-                    else
-                        variable_values = {
-                            sfill(nan, 'Temptation', 3)
-                        };
-                    end
-                elseif (tableno == 6) || (tableno == 7)
-                    if ~isempty(params_in(ip).tex_header_values)
-                        tex_vals = params_in(ip).tex_header_values{1};
-                        variable_values = {
-                            sfill(string(tex_vals.riskaver), 'Risk aversion')
-                            sfill(tex_vals.ies, 'IES')
-                        };
-                    else
-                        variable_values = {
-                            sfill(nan, 'Risk aversion', 2)
-                            sfill(nan, 'IES', 3)
-                        };
-                    end
-                elseif tableno == 5
-                    if ~isempty(params_in(ip).tex_header_values)
-                        tex_vals = params_in(ip).tex_header_values{1};
-                        variable_values = {
-                            sfill(tex_vals.pswitch, 'Switch probability', 2)
-                            sfill(tex_vals.width, 'Spacing', 3)
-                        };
-                    else
-                        variable_values = {
-                            sfill(nan, 'Switch probability', 2)
-                            sfill(nan, 'Spacing', 3)
-                        };
-                    end
-                elseif tableno == 4
-                    variable_values = {};
-                elseif tableno == 3
-                    if ~isempty(params_in(ip).tex_header_values)
-                        tex_vals = params_in(ip).tex_header_values{1};
-                        variable_values = {sfill(tex_vals.value, 'Value', 2)};
-                    else
-                        variable_values = {sfill(nan, 'Value', 2)};
-                    end
+                tex_vals = params_in(ip).tex_header_values;
+
+                variable_values = {};
+                for ih = 1:nhvars
+                    variable_values{end+1} = sfill(tex_vals.(hvars{ih}), hlabels{ih}, hdecimal[ih]);
                 end
+
                 if tableno == 8
                     statistics{ii} = {  results(ip).stats.mpcs(5).annual
                                         results(ip).stats.beta_A

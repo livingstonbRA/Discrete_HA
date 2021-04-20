@@ -4,7 +4,7 @@
 #SBATCH --error=/home/livingstonb/GitHub/Discrete_HA/output/run%a.err
 #SBATCH --partition=broadwl
 #SBATCH --time=12:00:00
-#SBATCH --array=1-43
+#SBATCH --array=1-49
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=10000

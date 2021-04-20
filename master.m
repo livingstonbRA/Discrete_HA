@@ -23,8 +23,8 @@ runopts.SaveOutput = true;
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
-runopts.name_to_run = sprintf('HtM = %g', 0.142); % ''
-runopts.number = []; % []
+runopts.name_to_run = ''; % ''
+runopts.number = [1]; % []
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE

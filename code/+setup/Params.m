@@ -20,7 +20,7 @@ classdef Params < handle
         group;
         descr;
         tex_header;
-        tex_header_values = {};
+        tex_header_values;
         
         % Data frequency, 1 (annual) or 4 (quarterly)
         freq;
@@ -159,12 +159,17 @@ classdef Params < handle
             obj.name = name;
             obj.freq = frequency;
             obj.R = 1 + obj.r;
-            
+
+            tex_header_values = struct('value', NaN,...
+                'pswitch', NaN, 'spacing', NaN,...
+                'riskaver', NaN, 'ies', NaN,...
+                'tempt', NaN, 'r', NaN, 'descr', NaN);
+
             % Default income processes
             if frequency == 1
                 obj.sd_logyT = sqrt(0.0494);
                 obj.sd_logyP = sqrt(0.0422);
-                obj.rho_logyP =0.9525;
+                obj.rho_logyP = 0.9525;
             elseif frequency == 4
                 % use quarterly_a if quarterly & no IncomeProcess is given
                 obj.sd_logyT = sqrt(0.2087);
