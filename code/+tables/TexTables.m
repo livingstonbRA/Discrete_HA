@@ -6,6 +6,7 @@ classdef TexTables
             {'Baseline'}
             {'Q1a'}
             {'Q1b'}
+            {'Q1c'}
             {'Q2'}
             {'Q3'}
             {'Q4'}
@@ -75,6 +76,7 @@ classdef TexTables
 	            case 'B'
 	            	get_stats = @(x) {...
 	            		x.stats.mean_a
+                        x.stats.median_a
                         x.stats.sav0
                         x.stats.constrained{1}
                         x.stats.constrained_dollars{1}
@@ -85,7 +87,7 @@ classdef TexTables
                         x.stats.a_lt_ytwelfth
                         x.stats.wpercentiles{1}
                         x.stats.wpercentiles{2}
-                        x.stats.wpercentiles{3}
+                        x.stats.wpercentiles{4}
                         x.stats.wpercentiles{5}
                         x.stats.wpercentiles{7}
                         x.stats.wpercentiles{8}
@@ -267,6 +269,7 @@ classdef TexTables
 	           	case 'B'
 	           		get_stats = @(x) {
 	           			x.stats.mean_a
+                        x.stats.median_a
 	                    x.stats.sav0
 	                    x.stats.constrained{1}
 	                    x.stats.constrained_dollars{1}

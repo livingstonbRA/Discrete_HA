@@ -99,7 +99,7 @@ function [params, all_names] = parameters(runopts)
     calibrations(n).target_values = [9.4];
     
     % Liquid wealth calibration, median assets = 0.05, 0.5, 1.0
-    for mw = [0.05, 0.5, 1.0]
+    for mw = [0.05, 0.5, 1.0, 1.54]
         name = sprintf('median(a) = %g', mw);
         params(end+1) = setup.Params(4, name, quarterly_b_params);
         params(end).group = {'Q1a'};
@@ -110,6 +110,42 @@ function [params, all_names] = parameters(runopts)
         calibrations(n).target_names = {'median_a'};
         calibrations(n).target_values = [mw];
     end
+
+    % Other asset/HtM targets
+    for mw = [0.046, 1.54]
+        name = sprintf('median(a) = %g', mw);
+        params(end+1) = setup.Params(4, name, quarterly_b_params);
+        params(end).group = {'Q1c'};
+        params(end).descr = {sprintf('Calibration to liquid wealth, median(a) = %g', mw)};
+        params(end).tex_header = 'Median(a)';
+        params(end).tex_header_values = {struct('value', mw)};
+        n = numel(params);
+        calibrations(n).target_names = {'median_a'};
+        calibrations(n).target_values = [mw];
+    end
+
+    name = sprintf('E[a] = %g', 0.5617);
+    params(end+1) = setup.Params(4, name, quarterly_b_params);
+    params(end).group = {'Q1c'};
+    params(end).descr = {'Calibration to total wealth, E[a] = 0.5617'};
+    params(end).tex_header = 'E[a]';
+    params(end).tex_header_values = {struct('value', 0.5617)};
+    params(end).betaH0 = 2e-3;
+    n = numel(params);
+    calibrations(n).target_names = {'mean_a'};
+    calibrations(n).target_values = [0.5617];
+
+    name = sprintf('HtM = %g', 0.142);
+    params(end+1) = setup.Params(4, name, quarterly_b_params);
+    params(end).group = {'Q1c'};
+    params(end).descr = {'Calibration to PHtM, HtM = 0.142'};
+    params(end).tex_header = 'HtM';
+    params(end).tex_header_values = {struct('value', 0.142)};
+    params(end).betaH0 = 2e-3;
+    n = numel(params);
+    calibrations(n).target_names = {'a_lt_ysixth'};
+    calibrations(n).target_values = [0.142];
+
 
     % no death
     name = 'No Death';

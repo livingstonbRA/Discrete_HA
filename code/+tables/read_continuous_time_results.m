@@ -15,6 +15,7 @@ function results = read_continuous_time_results(filepath)
         stats.std_log_gross_y_annual = empty_struct;
         stats.std_log_net_y_annual = empty_struct;
         stats.mean_a = empty_struct;
+        stats.median_a = empty_struct;
         stats.sav0 = empty_struct;
         stats.constrained = {empty_struct};
 
@@ -67,7 +68,8 @@ function results = read_continuous_time_results(filepath)
         stats.mean_gross_y_annual = struct('value', stats_orig.mean_gross_y_annual.value);
         stats.std_log_gross_y_annual = struct('value', stats_orig.std_log_gross_y_annual.value);
         stats.std_log_net_y_annual = struct('value', stats_orig.std_log_net_y_annual.value);
-        stats.mean_a = struct('value', stats_orig.totw.value);
+        stats.mean_a = struct('value', stats_orig.liqw.value);
+        stats.median_a = struct('value', stats_orig.median_liqw.value);
         stats.sav0 = struct('value', stats_orig.sav0.value);
         stats.constrained = {struct('value', stats_orig.constrained{1}.value)};
         
