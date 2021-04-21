@@ -246,6 +246,16 @@ classdef TexTables
         end
 
         function table_out = experiment_table_panel(params_in, variables, panel, tableno)
+            indices = filter_param_group(params_in, table_group);
+            all_annual = true;
+            for ii = 1:numel(indices)
+                ip = indices(ii);
+                if params_in(ip).freq == 4
+                    all_annual = false;
+                    break
+                end
+            end
+
             switch panel
 	            case 'A'
 	            	get_stats = @(x) {
@@ -281,7 +291,7 @@ classdef TexTables
 	                    x.stats.wgini
 	           		};
 	           	case 'C'
-                    if tableno == 8
+                    if all_annual
                         get_stats = @(x) {
                             x.stats.mpcs(4).annual
                             x.stats.mpcs(6).annual
@@ -293,7 +303,7 @@ classdef TexTables
                         };
                     end
                 case 'D'
-                    if tableno == 8
+                    if all_annual
                         get_stats = @(x) {
                             x.stats.mpcs(1).annual
                             x.stats.mpcs(2).annual

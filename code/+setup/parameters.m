@@ -315,7 +315,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q3'};
     params(end).descr = 'RA = exp(1), ..., exp(-1), IES = exp(-1), ..., exp(1)';
     params(end).tex_header = 'CRRA';
-    params(end).tex_header_values.riskaver = 'exp(-1), ..., exp(-1)';
+    params(end).tex_header_values.riskaver = 'exp(-1), ..., exp(1)';
     
     name = 'CRRA w/IES betw exp(-2), exp(2)';
     params(end+1) = setup.Params(ifreq, name, quarterly_b_params);
@@ -442,7 +442,7 @@ function [params, all_names] = parameters(runopts)
     params(end).group = {'Q7'};
     params(end).descr = 'No trans shocks';
     params(end).tex_header = 'Annual (i)';
-    params(end).tex_header_values.descr = 'no trans shocks';
+    params(end).tex_header_values.descr = 'No trans shocks';
 
     % iv
     name = 'Annual, Carrol';

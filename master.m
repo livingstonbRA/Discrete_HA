@@ -23,7 +23,7 @@ runopts.SaveOutput = true;
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
-runopts.name_to_run = 'EZ w/ RA betw exp(-2), exp(2)'; % ''
+runopts.name_to_run = 'Annual, Carrol'; % ''
 runopts.number = []; % []
 
 %% ------------------------------------------------------------------------
