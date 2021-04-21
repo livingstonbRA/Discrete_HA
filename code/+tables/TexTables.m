@@ -246,7 +246,7 @@ classdef TexTables
         end
 
         function table_out = experiment_table_panel(params_in, variables, panel, tableno)
-            tables.TexTables.table_includes{tableno};
+            table_group = tables.TexTables.table_includes{tableno};
             indices = filter_param_group(params_in, table_group);
             all_annual = true;
             for ii = 1:numel(indices)
