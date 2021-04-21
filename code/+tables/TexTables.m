@@ -20,42 +20,42 @@ classdef TexTables
     methods (Static)
         function [n, labels, vars, decimals] = get_header_variables(table_group)
             decimals = [];
-            switch table_group
-                case 'Q1a'
-                    labels = {'Value'};
-                    vars = {'value'};
-                case 'Q1b'
-                    labels = {'Value'};
-                    vars = {'value'};
-                case 'Q1c'
-                    labels = {};
-                    vars = {};
-                case 'Q2'
-                    labels = {'Switching Probability', 'Spacing'};
-                    vars = {'pswitch', 'spacing'};
-                    decimals = [2, 3];
-                case 'Q3'
-                    labels = {'Risk aversion'};
-                    vars = {'riskaver'};
-                    decimals = 2;
-                case 'Q4'
-                    labels = {'Risk aversion', 'IES'};
-                    vars = {'riskaver', 'ies'};
-                    decimals = [2, 3];
-                case 'Q5'
-                    labels = {'Temptation'};
-                    vars = {'tempt'};
-                    decimals = 3;
-                case 'Q6'
-                    labels = {'r'};
-                    vars = {'r'};
-                    decimals = 3;
-                case 'Q7'
-                    labels = {'Description'};
-                    vars = {'descr'};
-                case 'Q8'
-                    labels = {'Description'};
-                    vars = {'descr'};
+
+            if strcmp(table_group, 'Q1a')
+                labels = {'Value'};
+                vars = {'value'};
+            elseif strcmp(table_group, 'Q1b')
+                labels = {'Value'};
+                vars = {'value'};
+            elseif strcmp(table_group, 'Q1c')
+                labels = {};
+                vars = {};
+            elseif strcmp(table_group, 'Q2')
+                labels = {'Switching Probability', 'Spacing'};
+                vars = {'pswitch', 'spacing'};
+                decimals = [2, 3];
+            elseif strcmp(table_group, 'Q3')
+                labels = {'Risk aversion'};
+                vars = {'riskaver'};
+                decimals = 2;
+            elseif strcmp(table_group, 'Q4')
+                labels = {'Risk aversion', 'IES'};
+                vars = {'riskaver', 'ies'};
+                decimals = [2, 3];
+            elseif strcmp(table_group, 'Q5')
+                labels = {'Temptation'};
+                vars = {'tempt'};
+                decimals = 3;
+            elseif strcmp(table_group, 'Q6')
+                labels = {'r'};
+                vars = {'r'};
+                decimals = 3;
+            elseif strcmp(table_group, 'Q7')
+                labels = {'Description'};
+                vars = {'descr'};
+            elseif strcmp(table_group, 'Q8')
+                labels = {'Description'};
+                vars = {'descr'};
             end
 
             n = numel(labels);
@@ -214,7 +214,7 @@ classdef TexTables
 
                 variable_values = {};
                 for ih = 1:nhvars
-                    variable_values{end+1} = sfill(tex_vals.(hvars{ih}), hlabels{ih}, hdecimal[ih]);
+                    variable_values{end+1} = sfill(tex_vals.(hvars{ih}), hlabels{ih}, hdecimals(ih));
                 end
 
                 if tableno == 8

@@ -323,7 +323,6 @@ function [params, all_names] = parameters(runopts)
     if params(end).freq == 4
         params(end).betaH0 = -1e-3;
     end
-    params(end).beta0 = 0.911905140057402;
     params(end).group = {'Q3'};
     params(end).descr = 'RA = exp(2), ..., exp(-2), IES = exp(-2), ..., exp(2)';
     params(end).tex_header = 'CRRA';
@@ -394,9 +393,9 @@ function [params, all_names] = parameters(runopts)
     params(end).invies = 1;
     params(end).risk_aver = exp([-2 -1 0 1 2]);
     params(end).EpsteinZin = 1;
-    params(end).betaH0 = - 3e-3;
+    params(end).betaH0 = - 1e-3;
     params(end).betaL = 0.96;
-    params(end).beta0 = 0.99^4;
+    params(end).beta0 = 0.999349 ^ 4;
     params(end).group = {'Q4'};
     params(end).descr = 'RA = exp(-2), ..., exp(2), IES = 1';
     params(end).tex_header = 'EZ';

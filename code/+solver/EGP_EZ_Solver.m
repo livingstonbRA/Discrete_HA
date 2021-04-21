@@ -67,7 +67,7 @@ classdef EGP_EZ_Solver < handle
 		    obj.ss_dims_aug = [obj.ss_dims p.nyT];
 
 		    obj.repmat_to_state_space = ...
-		    	@(arr) extend_dims(arr, obj.ss_dims)
+		    	@(arr) extend_dims(arr, obj.ss_dims);
 		    obj.reshape_to_state_space = ...
 		        @(arr) reshape(arr, obj.ss_dims);
 
@@ -96,7 +96,7 @@ classdef EGP_EZ_Solver < handle
 				obj.iterate_once(income);
 
 				obj.EGP_cdiff = max(abs(obj.conupdate(:)-obj.con(:)));
-		        if mod(iter,100) ==0
+		        if (mod(iter,200) == 0) && ~obj.p.calibrating
 		            disp([' EGP Iteration ' int2str(iter)...
 		            		' max con fn diff is ' num2str(obj.EGP_cdiff)]);
 		        end
