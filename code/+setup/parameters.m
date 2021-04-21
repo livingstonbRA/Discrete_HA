@@ -99,7 +99,7 @@ function [params, all_names] = parameters(runopts)
     calibrations(n).target_values = [9.4];
     
     % Liquid wealth calibration, median assets = 0.05, 0.5, 1.0
-    for mw = [0.05, 0.5, 1.0, 1.54]
+    for mw = [0.05, 0.5, 1.0]
         name = sprintf('median(a) = %g', mw);
         params(end+1) = setup.Params(4, name, quarterly_b_params);
         params(end).group = {'Q1a'};

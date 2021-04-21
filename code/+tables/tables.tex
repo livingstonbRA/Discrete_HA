@@ -6,6 +6,7 @@
 \usepackage{geometry}
 \usepackage{pdflscape}
 \usepackage{threeparttable}
+\usepackage{ifthen}
 
 \addtolength{\topmargin}{-0.75in}
 \addtolength{\textheight}{1.5in}
@@ -14,154 +15,92 @@
 
 \begin{document}
 
-\begin{table}[h]
-\caption{Baselines}
-\begin{threeparttable}
-\centering
-\input{table1.tex}
+% Code for each table
+\newcommand{\modeltablecode}[3]{%
+	\begin{table}[ht] %
+	\caption{#1} %
+	\centering
+	\begin{threeparttable} %
+	\input{table#2.tex} %
+	#3 % table footnotes
+	\end{threeparttable} %
+	\end{table} %
+	\clearpage
+}
 
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% Table footnotes
+\newcommand{\modeltablenotes}[2]{%
+	\ifthenelse{\equal{#1}{1} \OR \equal{#2}{1}}{%
+	\begin{tablenotes} %
+	\ifthenelse{\equal{#1}{1}}{%
+		\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.}{}%
+    \ifthenelse{\equal{#2}{1}}{%
+		\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.}{}%
+    \end{tablenotes}%
+    }{}
+}
 
-\begin{table}[h]
-\caption{Baseline Decompositions}
-\begin{threeparttable}
-\centering
-\input{table2.tex}
+% Other commands
+\newcommand{\tablenumber}[1]{#1}
 
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% Table 1
+\modeltablecode{Baselines}{\tablenumber{1}}{ %
+	\modeltablenotes{1}{0} %
+}
 
-\clearpage
+% Table 2
+\modeltablecode{Baseline decompositions}{\tablenumber{2}}{ %
+	\modeltablenotes{0}{0} %
+}
 
-\begin{table}[h]
-\caption{Alternative Asset Targets (1)}
-\begin{threeparttable}
-\centering
-\input{table3.tex}
+% Table 3
+\modeltablecode{Alternative Targets (1)}{\tablenumber{3}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{table}[h]
-\caption{Alternative Asset Targets (2)}
-\begin{threeparttable}
-\centering
-\input{table4.tex}
+% Table 4
+\modeltablecode{Alternative Targets (2)}{\tablenumber{4}}{ %
+	\modeltablenotes{1}{1} %
+}
 
+% Table 5
+\modeltablecode{Bequests, Death, and Annuities}{\tablenumber{5}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% Table 6
+\modeltablecode{Discount Factor Heterogeneity}{\tablenumber{6}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{table}[h]
-\caption{Bequests, Death, and Annuities}
-\begin{threeparttable}
-\centering
-\input{table5.tex}
+% Table 7
+\modeltablecode{Risk Aversion}{\tablenumber{7}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% Table 8
+\modeltablecode{Epstein-Zin Preferences}{\tablenumber{8}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{table}[h]
-\caption{Discount Factor Heterogeneity}
-\begin{threeparttable}
-\centering
-\input{table6.tex}
+% Table 9
+\modeltablecode{Temptation Preferences}{\tablenumber{9}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% Table 10
+\modeltablecode{Temptation Preferences}{\tablenumber{10}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{table}[h]
-\caption{Risk Aversion}
-\begin{threeparttable}
-\centering
-\input{table7.tex}
+% Table 11
+\modeltablecode{Alternative Income Processes, Annual}{\tablenumber{11}}{ %
+	\modeltablenotes{1}{1} %
+}
 
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[h]
-\caption{Epstein-Zin Preferences}
-\begin{threeparttable}
-\centering
-\input{table8.tex}
-
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[h]
-\caption{Temptation Preferences}
-\begin{threeparttable}
-\centering
-\input{table9.tex}
-
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[h]
-\caption{Interest Rates}
-\begin{threeparttable}
-\centering
-\input{table10.tex}
-
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[h]
-\caption{Alternative Income Processes, Annual}
-\begin{threeparttable}
-\centering
-\input{table11.tex}
-
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[h]
-\caption{Alternative Income Processes, Quarterly}
-\begin{threeparttable}
-\centering
-\input{table12.tex}
-
-\begin{tablenotes}
-	\item[$\dagger$] Mean MPC for HtM households, where HtM is defined as assets less than or equal to \$1000.
-	\item[*] Where indicated, households are classified as HtM when $a \leq 1\%$ mean annual income.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+% Table 12
+\modeltablecode{Alternative Income Processes, Quarterly}{\tablenumber{12}}{ %
+	\modeltablenotes{1}{1} %
+}
 
 \end{document}

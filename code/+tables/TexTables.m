@@ -24,9 +24,11 @@ classdef TexTables
             if strcmp(table_group, 'Q1a')
                 labels = {'Value'};
                 vars = {'value'};
+                decimals = [2];
             elseif strcmp(table_group, 'Q1b')
                 labels = {'Value'};
                 vars = {'value'};
+                decimals = [3];
             elseif strcmp(table_group, 'Q1c')
                 labels = {};
                 vars = {};
@@ -207,6 +209,14 @@ classdef TexTables
 
             [nhvars, hlabels, hvars, hdecimals] = tables.TexTables.get_header_variables(table_group);
 
+            all_annual = true;
+            for ii = 1:numel(indices)
+                ip = indices(ii);
+                if params_in(ip).freq == 4
+                    all_annual = false;
+                    break
+                end
+            end
 
             for ii = 1:numel(indices)
                 ip = indices(ii);
@@ -217,7 +227,7 @@ classdef TexTables
                     variable_values{end+1} = sfill(tex_vals.(hvars{ih}), hlabels{ih}, hdecimals(ih));
                 end
 
-                if tableno == 8
+                if all_annual
                     statistics{ii} = {  results(ip).stats.mpcs(5).annual
                                         results(ip).stats.beta_A
                                       };
