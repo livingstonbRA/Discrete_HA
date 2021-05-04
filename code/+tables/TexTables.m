@@ -113,7 +113,7 @@ classdef TexTables
 	            		x.stats.mpcs(5).quarterly
 	                    x.stats.mpcs(5).annual
                         x.stats.mpcs(5).quarterly_htm_a_lt_1000
-	                    x.stats.beta_A
+	                    x.stats.beta_A_effective
 	                  };
 	            case 'A'
 		            get_stats = @(x) {...
@@ -229,13 +229,13 @@ classdef TexTables
 
                 if all_annual
                     statistics{ii} = {  results(ip).stats.mpcs(5).annual
-                                        results(ip).stats.beta_A
+                                        results(ip).stats.beta_A_effective
                                       };
                 else
                     statistics{ii} = {  results(ip).stats.mpcs(5).quarterly
                                         results(ip).stats.mpcs(5).annual
                                         results(ip).stats.mpcs(5).quarterly_htm_a_lt_1000
-                                        results(ip).stats.beta_A
+                                        results(ip).stats.beta_A_effective
                                       };
                 end
                 statistics{ii} = [variable_values(:); statistics{ii}];

@@ -36,7 +36,6 @@ for irun = 1:999
 
         S = load(fpath);
         params(ind) = S.Sparams;
-        results(ind) = S.results;
         stats{ind} = S.results.stats;
     end
 end

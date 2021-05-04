@@ -12,7 +12,7 @@ close all;
 runopts.calibrate = true; % wrap code in nonlinear solver
 runopts.fast = false; % very small asset and income grids for testing
 runopts.Simulate = false; % also solve distribution via simulation
-runopts.MakePlots = false; % not used
+runopts.MakePlots = true;
 runopts.MPCs = true;
 runopts.MPCs_news = false;
 runopts.MPCs_loan_and_loss = false;
@@ -23,8 +23,8 @@ runopts.SaveOutput = true;
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
-runopts.name_to_run = 'Annual, Carrol'; % ''
-runopts.number = []; % []
+runopts.name_to_run = ''; % ''
+runopts.number = [2]; % []
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE
@@ -87,3 +87,30 @@ fprintf('Finished parameterization %s\n', params.name)
 % -------------------------------------------------------------------------
 table_out = tables.OutputTable(params, results.stats)
 writetable(table_out, runopts.savexlxpath, 'WriteRowNames', true);
+
+%% ------------------------------------------------------------------------
+% FIGURES
+% -------------------------------------------------------------------------
+if runopts.MakePlots
+    mkdir('output/figures')
+    if strcmp(params.name, 'Quarterly')
+        % Quarterline baseline
+        statistics.DHAPlots.consumption_wealth_overlay(results.stats, params);
+        figpath = fullfile('output', 'baseline_quarterly_c_x_overlay.jpg');
+        saveas(gcf, figpath)
+        
+        statistics.DHAPlots.mpc_function(results.stats, 'mpc_type', 'period');
+        figpath = fullfile('output', 'baseline_quarterly_period_mpcs.jpg');
+        saveas(gcf, figpath)
+        
+        statistics.DHAPlots.mpc_function(results.stats, 'mpc_type', 'cumulative');
+        figpath = fullfile('output', 'baseline_quarterly_cumulative_mpcs.jpg');
+        saveas(gcf, figpath)
+    elseif params.nbeta > 1
+        statistics.DHAPlots.consumption_wealth_overlay(results.stats, params,...
+            'curve_variable', 'beta');
+        figpath = fullfile('output', 'fixed_beta_heterogeneity_c_x_overlay.jpg');
+        saveas(gcf, figpath)
+    end
+end
+        

@@ -85,7 +85,7 @@ classdef MPCFinder < handle
 					sprintf('Quarterly HtM1 MPC (%%), out of %s', shock_label), 1,...
 		    		sprintf('Quarterly MPC\textsuperscript{$\\dagger$} (\\%%), out of %s', shock_label_tex));
 
-		    	obj.mpcs(ishock).avg_s_t = NaN(5,5);
+		    	obj.mpcs(ishock).avg_s_t = NaN(5,9);
 		    	% mpcs over states for shock in period 1
 		    	obj.mpcs(ishock).mpcs_1_t = cell(1,4);
                 % fraction of responders
@@ -93,7 +93,7 @@ classdef MPCFinder < handle
                 obj.mpcs(ishock).mpc_neg = NaN(5,5);
                 obj.mpcs(ishock).mpc0 = NaN(5,5);
                 % conditional mean
-                obj.mpcs(ishock).avg_s_t_condl = NaN(5,5);
+                obj.mpcs(ishock).avg_s_t_condl = NaN(5,9);
                 % median
                 obj.mpcs(ishock).median = NaN(5,5);
 
@@ -313,7 +313,7 @@ classdef MPCFinder < handle
 	        RHScon = obj.basemodel.statetrans^shockperiod * obj.con_baseline(:);
 	        LHScon = obj.con_baseline(:);
 
-	        for it = shockperiod+1:5 % it > shockperiod case, policy fcns stay the same in this region
+	        for it = shockperiod+1:9 % it > shockperiod case, policy fcns stay the same in this region
 	            mpcs = (trans_1_t * LHScon - RHScon) / obj.p.shocks(ishock);
 
 	            % state transitions are as usual post-shock

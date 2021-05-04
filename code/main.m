@@ -174,7 +174,7 @@ function results = main(p)
     % FIGURES
     % ---------------------------------------------------------------------
     % if p.MakePlots
-    %     % plot(grdDST.a.vec, cumsum(results.direct.agrid_dist))
+    %     % plot(grdDST.a.vec, cumsum(results.stats.pmf_a))
     %     % xlim([0 0.2])
         
     %     % Wealth at low yP

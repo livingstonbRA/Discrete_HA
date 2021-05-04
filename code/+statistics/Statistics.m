@@ -6,7 +6,10 @@ classdef Statistics < handle
 		cdf_a;
 		agrid;
 
+		xgrid_variables;
+
 		beta_A;
+		beta_A_effective;
 		beta_Q;
 
 		mean_a;
@@ -74,6 +77,7 @@ classdef Statistics < handle
 			obj.compute_percentiles();
 			obj.compute_inequality();
 			obj.compute_constrained();
+			obj.construct_xgrid_variables();
 		end
 
 		function add_mpcs(obj, mpcs_obj)
@@ -91,6 +95,7 @@ classdef Statistics < handle
 			% Intro stats
 			obj.beta_A = empty_stat('Beta (annualized)', 3);
 			obj.beta_Q = empty_stat('Beta (quarterly)', 3);
+			obj.beta_A_effective = empty_stat('Effective discount rate', 3);
 			obj.mean_a = empty_stat('Mean wealth', 3, 'Mean wealth');
 			obj.mean_s = empty_stat('Mean s');
 			obj.sav0 = empty_stat('s = 0', 3, '$s = 0$');
@@ -153,6 +158,9 @@ classdef Statistics < handle
 		function compute_intro_stats(obj)
 			obj.beta_A.value = obj.p.beta0 ^ obj.freq;
 		    obj.beta_Q.value = obj.p.beta0 ^ (obj.freq / 4);
+		    obj.beta_A_effective.value = obj.beta_A.value ...
+		    	* (1 - obj.p.dieprob) ^ obj.freq;
+
 		    obj.mean_a.value = obj.expectation(obj.grdDST.a.matrix);
 
 		    xdist = obj.model.xdist(:);
@@ -240,6 +248,29 @@ classdef Statistics < handle
 
 			obj.a_lt_ysixth.value = ay_interp(1/6);
 			obj.a_lt_ytwelfth.value = ay_interp(1/12);
+		end
+
+		function construct_xgrid_variables(obj)
+			obj.xgrid_variables = struct();
+            
+            dims = [obj.nx*obj.p.nyT, obj.p.nyP, obj.p.nyF, obj.p.nz];
+            vars = {'xvals', 'y_x', 'nety_x', 'sav_x', 'con_x', 'xdist'};
+            for iv = 1:numel(vars)
+                obj.xgrid_variables.(vars{iv}) = zeros(dims);
+            end
+
+			% Sort by x values
+            dim1 = obj.nx*obj.p.nyT;
+            for iyP = 1:obj.p.nyP
+                for iyF = 1:obj.p.nyF
+                    for iz = 1:obj.p.nz
+                        [~, ixvals] = sortrows(obj.model.xvals(:,iyP,iyF,iz));
+                        for iv = 1:numel(vars)
+                            obj.xgrid_variables.(vars{iv})(:,iyP,iyF,iz) = obj.model.(vars{iv})(ixvals,iyP,iyF,iz);
+                        end
+                    end
+                end
+            end
 		end
 
 		function out = expectation(obj, vals)
