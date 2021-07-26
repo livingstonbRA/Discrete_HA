@@ -65,6 +65,7 @@ function results = read_continuous_time_results(filepath)
         end
         
         stats.beta_A = struct('value', stats_orig.beta_A.value);
+        stats.beta_A_effective = struct('value', stats_orig.beta_A_effective.value);
         stats.mean_gross_y_annual = struct('value', stats_orig.mean_gross_y_annual.value);
         stats.std_log_gross_y_annual = struct('value', stats_orig.std_log_gross_y_annual.value);
         stats.std_log_net_y_annual = struct('value', stats_orig.std_log_net_y_annual.value);

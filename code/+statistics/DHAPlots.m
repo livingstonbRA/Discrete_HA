@@ -43,12 +43,12 @@ classdef DHAPlots
                     labels = {'$y_{high}$', '$y_{mid}$', '$y_{low}$'};
                     figure_order = [3, 2, 1];
                 end
-            elseif ismember({options.curve_variable}, {'beta', 'crra'})
+            elseif ismember({options.curve_variable}, {'beta', 'crra', 'r'})
                 iyP = ceil(p.nyP / 2);
+
                 if isempty(options.curve_indices)
                     iz_median = ceil(p.nz / 2);
                     options.curve_indices = [1, iz_median, p.nz];
-                    
                 end
 
                 nfigs = numel(options.curve_indices);
@@ -65,7 +65,20 @@ classdef DHAPlots
                     labels = {'$\beta_{high}$', '$\beta_{mid}$', '$\beta_{low}$'};
                     figure_order = [3, 2, 1];
                 elseif strcmp(options.curve_variable, 'crra')
-                    labels = {'$crra_{high}$', '$crra_{mid}$', '$crra_{low}$'};
+                    labels = cell(1, nfigs);
+                    for ifig = 1:nfigs
+                        iz = options.curve_indices(ifig);
+                        ies = 1 / p.risk_aver(iz);
+                        labels{ifig} = sprintf('$IES = %.3f$', ies);
+                    end
+                    figure_order = [3, 2, 1];
+                elseif strcmp(options.curve_variable, 'r')
+                    labels = cell(1, nfigs);
+                    for ifig = 1:nfigs
+                        iz = options.curve_indices(ifig);
+                        r_i = p.R(iz) ^ 4 - 1;
+                        labels{ifig} = sprintf('$r = %.2f$', r_i);
+                    end
                     figure_order = [3, 2, 1];
                 end
             end

@@ -12,7 +12,7 @@ close all;
 runopts.calibrate = true; % wrap code in nonlinear solver
 runopts.fast = false; % very small asset and income grids for testing
 runopts.Simulate = false; % also solve distribution via simulation
-runopts.MakePlots = true;
+runopts.MakePlots = false;
 runopts.MPCs = true;
 runopts.MPCs_news = false;
 runopts.MPCs_loan_and_loss = false;
@@ -23,8 +23,8 @@ runopts.SaveOutput = true;
 runopts.mode = 'parameters'; % 'parameters'
 
 % select experiment (ignored when run on server)
-runopts.name_to_run = ''; % ''
-runopts.number = [2]; % []
+runopts.name_to_run = 'Quarterly'; % ''
+runopts.number = []; % []
 
 %% ------------------------------------------------------------------------
 % HOUSEKEEPING, DO NOT CHANGE
@@ -110,6 +110,16 @@ if runopts.MakePlots
         statistics.DHAPlots.consumption_wealth_overlay(results.stats, params,...
             'curve_variable', 'beta');
         figpath = fullfile('output', 'fixed_beta_heterogeneity_c_x_overlay.jpg');
+        saveas(gcf, figpath)
+    elseif numel(params.r) > 1
+        statistics.DHAPlots.consumption_wealth_overlay(results.stats, params,...
+            'curve_variable', 'r');
+        figpath = fullfile('output', 'fixed_returns_heterogeneity_c_x_overlay.jpg');
+        saveas(gcf, figpath)
+    elseif numel(params.risk_aver) > 1
+        statistics.DHAPlots.consumption_wealth_overlay(results.stats, params,...
+            'curve_variable', 'crra');
+        figpath = fullfile('output', 'fixed_ies_heterogeneity_c_x_overlay.jpg');
         saveas(gcf, figpath)
     end
 end
