@@ -282,6 +282,6 @@ function results = main(p)
     converged = p.calibrating;
 
     if ~p.calibrating
-        save(p.savematpath, 'Sparams', 'results', 'converged')
+        save(p.savematpath, 'Sparams', 'results', 'heterogeneity', 'converged')
     end
 end
