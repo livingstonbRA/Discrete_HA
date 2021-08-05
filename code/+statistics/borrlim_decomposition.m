@@ -43,7 +43,7 @@ function decomp = borrlim_decomposition(p_baseline, results_baseline,...
     % ---------------------------------------------------------------------
     HA_with_BC = struct();
 
-    HA_with_BC.Empc = results_baseline.direct.mpcs(5).avg_s_t(1,1);
+    HA_with_BC.Empc = results_baseline.direct.mpcs(5).avg_s_t{1,1}.value;
 
     mpcs = results_baseline.direct.mpcs(5).mpcs_1_t{1};
     HA_with_BC.mpcs = reshape(mpcs, [], n_het);

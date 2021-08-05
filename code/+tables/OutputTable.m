@@ -91,6 +91,36 @@ function table_out = OutputTable(p, stats)
 	new_rows = table(values, 'RowNames', rownames(:), 'VariableNames', {name});
 	table_out = [table_out; new_rows];
 
+	%% Intertemporal MPCs
+	paneltitle = struct('value', NaN, 'label', '____MPC, Intertemporal');
+	mpcsize_stats = {
+		paneltitle
+		stats.mpcs(5).avg_s_t{1,1}
+		stats.mpcs(5).avg_s_t{1,2}
+		stats.mpcs(5).avg_s_t{1,3}
+		stats.mpcs(5).avg_s_t{1,4}
+	};
+
+	values = get_values(mpcsize_stats);
+	rownames = get_names(mpcsize_stats);
+	new_rows = table(values, 'RowNames', rownames(:), 'VariableNames', {name});
+	table_out = [table_out; new_rows];
+
+	%% Intertemporal MPCs
+	paneltitle = struct('value', NaN, 'label', '____MPC, Out of News');
+	mpcsize_stats = {
+		paneltitle
+		stats.mpcs(5).avg_s_t{5,1}
+		stats.mpcs(5).avg_s_t{5,2}
+		stats.mpcs(5).avg_s_t{5,3}
+		stats.mpcs(5).avg_s_t{5,4}
+	};
+
+	values = get_values(mpcsize_stats);
+	rownames = get_names(mpcsize_stats);
+	new_rows = table(values, 'RowNames', rownames(:), 'VariableNames', {name});
+	table_out = [table_out; new_rows];
+
 	%% Decomp wrt RA model
 	paneltitle = struct('value', NaN, 'label', '____Decomposition of E[MPC] - MPC_RA');
 	decomp_ra_stats = {

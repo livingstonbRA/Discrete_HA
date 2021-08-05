@@ -85,7 +85,17 @@ classdef MPCFinder < handle
 					sprintf('Quarterly HtM1 MPC (%%), out of %s', shock_label), 1,...
 		    		sprintf('Quarterly MPC\textsuperscript{$\\dagger$} (\\%%), out of %s', shock_label_tex));
 
-		    	obj.mpcs(ishock).avg_s_t = NaN(5,9);
+                for iss = 1:5
+                	for itt = 1:9
+                		obj.mpcs(ishock).avg_s_t = cell(5, 9);
+                		s_t_label = sprintf('Period %d MPC out of %s period %d shock',...
+                			itt, iss, shock_label_tex);
+                		obj.mpcs(ishock).avg_s_t{iss,itt} = sfill(NaN,...
+                			s_t_label, 1, s_t_label);
+                	end
+                end
+
+		    	% obj.mpcs(ishock).avg_s_t = NaN(5,9);
 		    	% mpcs over states for shock in period 1
 		    	obj.mpcs(ishock).mpcs_1_t = cell(1,4);
                 % fraction of responders
@@ -270,7 +280,7 @@ classdef MPCFinder < handle
 	            	obj.loan.median = mpc_median;
                     return;
 	            elseif shockperiod <= 5
-	            	obj.mpcs(ishock).avg_s_t(shockperiod,it) = obj.basemodel.pmf(:)' * mpcs(:);
+	            	obj.mpcs(ishock).avg_s_t{shockperiod,it}.value = obj.basemodel.pmf(:)' * mpcs(:);
                     obj.mpcs(ishock).avg_s_t_condl(shockperiod,it) = mpc_condl;
                     obj.mpcs(ishock).mpc_pos(shockperiod,it) = mpc_pos;
                     obj.mpcs(ishock).mpc_neg(shockperiod,it) = mpc_neg;
@@ -317,7 +327,7 @@ classdef MPCFinder < handle
 	            mpcs = (trans_1_t * LHScon - RHScon) / obj.p.shocks(ishock);
 
 	            % state transitions are as usual post-shock
-	            obj.mpcs(ishock).avg_s_t(shockperiod,it) = obj.basemodel.pmf(:)' * mpcs(:);
+	            obj.mpcs(ishock).avg_s_t{shockperiod,it}.value = obj.basemodel.pmf(:)' * mpcs(:);
 	            RHScon = obj.basemodel.statetrans * RHScon;
 	            LHScon = obj.basemodel.statetrans * LHScon;
 	            
@@ -329,15 +339,17 @@ classdef MPCFinder < handle
 
 		function compute_cumulative_mpcs(obj)
 			for ishock = 1:6
-				obj.mpcs(ishock).avg_1_1to4 = sum(obj.mpcs(ishock).avg_s_t(1,1:4));
-				obj.mpcs(ishock).avg_5_1to4 = sum(obj.mpcs(ishock).avg_s_t(5,1:4));
+				vec_1_1to4 = [cell2mat(obj.mpcs(ishock).avg_s_t(1,1:4)).value];
+				obj.mpcs(ishock).avg_1_1to4 = sum(vec_1_1to4);
+				vec_5_1to4 = [cell2mat(obj.mpcs(ishock).avg_s_t(5,1:4)).value];
+				obj.mpcs(ishock).avg_5_1to4 = sum(vec_5_1to4);
 				if obj.p.freq == 4
-					obj.mpcs(ishock).quarterly.value = 100 * obj.mpcs(ishock).avg_s_t(1,1);
+					obj.mpcs(ishock).quarterly.value = 100 * obj.mpcs(ishock).avg_s_t{1,1}.value;
 					obj.mpcs(ishock).annual.value = 100 * obj.mpcs(ishock).avg_1_1to4;
 					obj.mpcs(ishock).oneperiod.value = obj.mpcs(ishock).quarterly.value;
 				else
 					obj.mpcs(ishock).quarterly.value = NaN;
-					obj.mpcs(ishock).annual.value = 100 * obj.mpcs(ishock).avg_s_t(1,1);
+					obj.mpcs(ishock).annual.value = 100 * obj.mpcs(ishock).avg_s_t{1,1}.value;
 					obj.mpcs(ishock).oneperiod.value = obj.mpcs(ishock).annual.value;
 				end
 

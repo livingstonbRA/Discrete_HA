@@ -126,13 +126,15 @@ classdef DHAPlots
 
             options = parser.Results;
 
-            if strcmp(options.mpc_type, 'period')
-                mpcs = stats.mpcs(5).avg_s_t(1,1:9);
-                label = '$MPC_t$';
-            else
-                mpcs = cumsum(stats.mpcs(5).avg_s_t(1,1:9));
-                label = '$MPC_t$';
-            end 
+            mpcs = zeros(1, 9);
+            for k = 1:9
+                mpcs(k) = stats.mpcs(5).avg_s_t{1,k}.value;
+            end
+
+            if ~strcmp(options.mpc_type, 'period')
+                mpcs = cumsum(mpcs);
+            end
+            label = '$MPC_t$';
 
             close all
             ax = axes();
