@@ -98,9 +98,9 @@ def save_tex_table(dirpath, tableno):
 		]
 	elif tableno == 2:
 		panel_args = [
-			['A', 'Decomposition of Mean MPC, around 0'],
-			['B', 'Decomposition of Mean MPC, around 0.01'],
-			['C', 'Decomposition of Mean MPC, around 0.05'],
+			['A', 'Decomposition of Mean MPC, around $$1000$'],
+			['B', 'Decomposition of Mean MPC, around $$2000$'],
+			['C', 'Decomposition of Mean MPC, around $$3000$'],
 			['D', 'Decomposition of Mean MPC - MPC$_{RA}$'],
 		]
 	else:

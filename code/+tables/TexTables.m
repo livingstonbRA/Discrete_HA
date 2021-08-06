@@ -263,16 +263,16 @@ classdef TexTables
 	            		x.Em1_less_Em0
                         x.term1
                         x.term2
-                        x.term2a(2)
-                        x.term2b(2)
+                        x.term2a(1)
+                        x.term2b(1)
                         x.term3
 	            	};
 	           	case 'A2'
 	           		get_stats = @(x) {
 	           			x.term1_pct
                         x.term2_pct
-                        x.term2a_pct(2)
-                        x.term2b_pct(2)
+                        x.term2a_pct(1)
+                        x.term2b_pct(1)
                         x.term3_pct
 	           		};
 	           	case 'B'

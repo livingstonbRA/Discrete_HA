@@ -12,6 +12,7 @@ function [params, all_names] = parameters(runopts)
     % Statistics from the 2019 SCF
     scf = setup.scf2019struct();
     shared_params.numeraire_in_dollars = scf.annual_earnings;
+    shared_params.abars = [1000, 2000, 3000]  / scf.annual_earnings;
 
     mean_totw_target = scf.mean_totw / scf.annual_earnings;
 
