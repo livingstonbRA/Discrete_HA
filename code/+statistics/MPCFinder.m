@@ -85,9 +85,9 @@ classdef MPCFinder < handle
 					sprintf('Quarterly HtM1 MPC (%%), out of %s', shock_label), 1,...
 		    		sprintf('Quarterly MPC\textsuperscript{$\\dagger$} (\\%%), out of %s', shock_label_tex));
 
+                obj.mpcs(ishock).avg_s_t = cell(5, 9);
                 for iss = 1:5
                 	for itt = 1:9
-                		obj.mpcs(ishock).avg_s_t = cell(5, 9);
                 		s_t_label = sprintf('Period %d MPC out of %s period %d shock',...
                 			itt, iss, shock_label_tex);
                 		obj.mpcs(ishock).avg_s_t{iss,itt} = sfill(NaN,...

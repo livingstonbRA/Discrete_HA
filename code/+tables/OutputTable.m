@@ -93,7 +93,7 @@ function table_out = OutputTable(p, stats)
 
 	%% Intertemporal MPCs
 	paneltitle = struct('value', NaN, 'label', '____MPC, Intertemporal');
-	mpcsize_stats = {
+	it_mpc_stats = {
 		paneltitle
 		stats.mpcs(5).avg_s_t{1,1}
 		stats.mpcs(5).avg_s_t{1,2}
@@ -101,14 +101,14 @@ function table_out = OutputTable(p, stats)
 		stats.mpcs(5).avg_s_t{1,4}
 	};
 
-	values = get_values(mpcsize_stats);
-	rownames = get_names(mpcsize_stats);
+	values = get_values(it_mpc_stats);
+	rownames = get_names(it_mpc_stats);
 	new_rows = table(values, 'RowNames', rownames(:), 'VariableNames', {name});
 	table_out = [table_out; new_rows];
 
-	%% Intertemporal MPCs
+	%% News MPCs
 	paneltitle = struct('value', NaN, 'label', '____MPC, Out of News');
-	mpcsize_stats = {
+	mpcnews_stats = {
 		paneltitle
 		stats.mpcs(5).avg_s_t{5,1}
 		stats.mpcs(5).avg_s_t{5,2}
@@ -116,8 +116,8 @@ function table_out = OutputTable(p, stats)
 		stats.mpcs(5).avg_s_t{5,4}
 	};
 
-	values = get_values(mpcsize_stats);
-	rownames = get_names(mpcsize_stats);
+	values = get_values(mpcnews_stats);
+	rownames = get_names(mpcnews_stats);
 	new_rows = table(values, 'RowNames', rownames(:), 'VariableNames', {name});
 	table_out = [table_out; new_rows];
 
