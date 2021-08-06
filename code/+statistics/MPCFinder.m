@@ -89,7 +89,7 @@ classdef MPCFinder < handle
                 for iss = 1:5
                 	for itt = 1:9
                 		s_t_label = sprintf('Period %d MPC out of %s period %d shock',...
-                			itt, iss, shock_label_tex);
+                			itt, shock_label_tex, iss);
                 		obj.mpcs(ishock).avg_s_t{iss,itt} = sfill(NaN,...
                 			s_t_label, 1, s_t_label);
                 	end
